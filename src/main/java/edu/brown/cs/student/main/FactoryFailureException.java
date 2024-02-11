@@ -1,0 +1,23 @@
+package edu.brown.cs.student.main;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * This is an error provided to catch any error that may occur when you create an object from a row.
+ * Feel free to expand or supplement or use it for other purposes.
+ */
+public class FactoryFailureException extends Exception {
+  /** List of Strings keeping track of all rows that caused an error */
+  final List<String> row;
+  /**
+   * Occurs when there is a malformed row
+   *
+   * @param message information about the exception
+   * @param row row that the exception occurred in
+   */
+  public FactoryFailureException(String message, List<String> row) {
+    super(message);
+    this.row = new ArrayList<>(row);
+  }
+}
