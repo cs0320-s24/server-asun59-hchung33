@@ -34,6 +34,7 @@ public class ParseDatasource implements Datasource {
   }
 
   public void setMap(Map<String, List<List<String>>> responseMap) {
+    System.out.println(responseMap);
     this.responseMap = responseMap;
   }
 

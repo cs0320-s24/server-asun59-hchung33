@@ -23,22 +23,27 @@ public class LoadCSVHandler implements Route {
   @Override
   public Object handle(Request request, Response response) {
     Moshi moshi = new Moshi.Builder().build();
-    Type mapStringObject = Types.newParameterizedType(Map.class, String.class, Object.class);
-    JsonAdapter<Map<String, Object>> mapAdapter = moshi.adapter(mapStringObject);
+    Type mapType =
+        Types.newParameterizedType(
+            Map.class,
+            String.class,
+            Types.newParameterizedType(
+                List.class, Types.newParameterizedType(List.class, String.class)));
+    JsonAdapter<Map<String, List<List<String>>>> adapter = moshi.adapter(mapType);
+
     Map<String, List<List<String>>> responseMap = new HashMap<>();
+
     try {
       String path = request.queryParams("path");
       this.state.parse(path);
       this.parsed = this.state.getParsed();
+      System.out.println(this.parsed);
       responseMap.put(path, this.parsed);
       this.state.setMap(responseMap);
-      System.out.println(this.parsed);
     } catch (Exception e) {
-      //      responseMap.put("result", "error");
-      //      responseMap.put("error", e.getMessage());
+     //TODO: add error message
     }
-    String hello = "Hello";
-    return hello;
-    //    return mapAdapter.toJson(responseMap);
+
+    return adapter.toJson(responseMap);
   }
 }
