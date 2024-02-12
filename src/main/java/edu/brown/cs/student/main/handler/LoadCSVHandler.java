@@ -41,7 +41,7 @@ public class LoadCSVHandler implements Route {
       responseMap.put(path, this.parsed);
       this.state.setMap(responseMap);
     } catch (Exception e) {
-     //TODO: add error message
+      // TODO: add error message
     }
 
     return adapter.toJson(responseMap);

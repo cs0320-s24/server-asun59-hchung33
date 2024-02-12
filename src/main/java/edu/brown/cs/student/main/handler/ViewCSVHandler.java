@@ -5,7 +5,9 @@ import com.squareup.moshi.Moshi;
 import com.squareup.moshi.Types;
 import edu.brown.cs.student.main.datasource.ParseDatasource;
 import java.lang.reflect.Type;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import spark.Request;
 import spark.Response;
 import spark.Route;
@@ -22,49 +24,30 @@ public class ViewCSVHandler implements Route {
   public Object handle(Request request, Response response) {
     Moshi moshi = new Moshi.Builder().build();
 
+    // Error message
+    Map<String, String> errorJson = new HashMap<>();
+    // Serialize the error message to a JSON string
+    Moshi moshiError = new Moshi.Builder().build();
+    JsonAdapter<Map<String, String>> adapterError =
+        moshi.adapter(Types.newParameterizedType(Map.class, String.class, String.class));
+
     try {
       String path = request.queryParams("path");
       if (this.state.getMap().containsKey(path)) {
         // Get the parsed data
         List<List<String>> parsedData = this.state.getMap().get(path);
-        System.out.println(parsedData);
-        System.out.println("parsed");
         // Serialize the parsed data to a JSON string
         Type listListStringType =
             Types.newParameterizedType(
                 List.class, Types.newParameterizedType(List.class, String.class));
         JsonAdapter<List<List<String>>> adapter = moshi.adapter(listListStringType);
-        System.out.println(adapter.toJson(parsedData));
         return adapter.toJson(parsedData);
       }
     } catch (Exception e) {
-      // TODO: add error message
-      System.out.println("hello");
-
+      errorJson.put("error", e.getMessage());
+      return adapterError.toJson(errorJson);
     }
-    String error = "Invalid file path";
-    return error;
-
-    ///
-
-    //    // Use a Moshi adapter for List<Map<String, Object>> assuming that's what you want
-    //    Moshi moshi = new Moshi.Builder().build();
-    //    Type listStringObject = Types.newParameterizedType(List.class, String.class);
-    //    JsonAdapter<List<List<String>>> adapter = moshi.adapter(listStringObject);
-    //    Map<String, Object> responseMap = new HashMap<>();
-    //    try {
-    //      String path = request.queryParams("path");
-    //      System.out.println(this.state.getMap().containsKey(path));
-    //      if (this.state.getMap().containsKey(path)) {
-    //        List<List<String>> output = this.state.getMap().get(path);
-    //        System.out.println("hskdbfkshdf");
-    //        return adapter.toJson(output);
-    //      }
-    //    } catch (Exception e) {
-    //      responseMap.put("result", "error");
-    //      responseMap.put("error", e.getMessage());
-    //    }
-    //    String error = "Invalid file path";
-    //    return error;
+    errorJson.put("error", "File can not be viewed");
+    return adapterError.toJson(errorJson);
   }
 }
