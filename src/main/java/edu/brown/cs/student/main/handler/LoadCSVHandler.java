@@ -4,7 +4,6 @@ import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
 import com.squareup.moshi.Types;
 import edu.brown.cs.student.main.datasource.ParseDatasource;
-import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,18 +21,16 @@ public class LoadCSVHandler implements Route {
 
   @Override
   public Object handle(Request request, Response response) {
-    Moshi moshi = new Moshi.Builder().build();
-    Type mapType =
-        Types.newParameterizedType(
-            Map.class,
-            String.class,
-            Types.newParameterizedType(
-                List.class, Types.newParameterizedType(List.class, String.class)));
-    JsonAdapter<Map<String, List<List<String>>>> adapter = moshi.adapter(mapType);
-
-    Map<String, List<List<String>>> responseMap = new HashMap<>();
+    // return message
+    Map<String, String> returnJson = new HashMap<>();
+    // Serialize the error message to a JSON string
+    Moshi moshiReturn = new Moshi.Builder().build();
+    JsonAdapter<Map<String, String>> adapterReturn =
+        moshiReturn.adapter(Types.newParameterizedType(Map.class, String.class, String.class));
 
     try {
+      // Add to response map
+      Map<String, List<List<String>>> responseMap = new HashMap<>();
       String path = request.queryParams("path");
       this.state.parse(path);
       this.parsed = this.state.getParsed();
@@ -41,9 +38,10 @@ public class LoadCSVHandler implements Route {
       responseMap.put(path, this.parsed);
       this.state.setMap(responseMap);
     } catch (Exception e) {
-      // TODO: add error message
+      returnJson.put("error", e.getMessage());
+      return adapterReturn.toJson(returnJson);
     }
-
-    return adapter.toJson(responseMap);
+    returnJson.put("Success", "File loaded");
+    return adapterReturn.toJson(returnJson);
   }
 }

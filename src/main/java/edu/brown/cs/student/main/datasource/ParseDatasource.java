@@ -18,15 +18,12 @@ public class ParseDatasource implements Datasource {
   }
 
   @Override
-  public void parse(String path) {
+  public void parse(String path) throws FactoryFailureException, IOException {
     CreatorFromRow<List<String>> stringCreator = new StringCreator();
-    try {
-      FileReader reader = new FileReader(path);
-      CSVParser<List<String>> parser = new CSVParser<List<String>>(reader, stringCreator);
-      this.parsed = parser.parse();
-    } catch (FactoryFailureException | IOException e) {
-      System.err.println("Error: " + e);
-    }
+
+    FileReader reader = new FileReader(path);
+    CSVParser<List<String>> parser = new CSVParser<List<String>>(reader, stringCreator);
+    this.parsed = parser.parse();
   }
 
   public List<List<String>> getParsed() {
