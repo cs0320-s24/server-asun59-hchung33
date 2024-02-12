@@ -13,9 +13,7 @@ public class ParseDatasource implements Datasource {
   List<List<String>> parsed;
   private Map<String, List<List<String>>> responseMap;
 
-  public ParseDatasource() {
-    // parse shit
-  }
+  public ParseDatasource() {}
 
   @Override
   public void parse(String path) throws FactoryFailureException, IOException {
@@ -31,7 +29,6 @@ public class ParseDatasource implements Datasource {
   }
 
   public void setMap(Map<String, List<List<String>>> responseMap) {
-    System.out.println(responseMap);
     this.responseMap = responseMap;
   }
 

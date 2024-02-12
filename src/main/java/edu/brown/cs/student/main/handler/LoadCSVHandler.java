@@ -34,7 +34,6 @@ public class LoadCSVHandler implements Route {
       String path = request.queryParams("path");
       this.state.parse(path);
       this.parsed = this.state.getParsed();
-      System.out.println(this.parsed);
       responseMap.put(path, this.parsed);
       this.state.setMap(responseMap);
     } catch (Exception e) {

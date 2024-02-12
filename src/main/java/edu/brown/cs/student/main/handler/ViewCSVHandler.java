@@ -14,7 +14,6 @@ import spark.Route;
 
 public class ViewCSVHandler implements Route {
   private final ParseDatasource state;
-  private List<List<String>> parsed;
 
   public ViewCSVHandler(ParseDatasource state) {
     this.state = state;
@@ -29,13 +28,15 @@ public class ViewCSVHandler implements Route {
     // Serialize the error message to a JSON string
     Moshi moshiError = new Moshi.Builder().build();
     JsonAdapter<Map<String, String>> adapterError =
-        moshi.adapter(Types.newParameterizedType(Map.class, String.class, String.class));
+        moshiError.adapter(
+            Types.newParameterizedType(
+                Map.class, String.class, String.class)); // might not need two?
 
     try {
       String path = request.queryParams("path");
       if (this.state.getMap().containsKey(path)) {
         // Get the parsed data
-        List<List<String>> parsedData = this.state.getMap().get(path);
+        List<List<String>> parsedData = this.state.getParsed();
         // Serialize the parsed data to a JSON string
         Type listListStringType =
             Types.newParameterizedType(
