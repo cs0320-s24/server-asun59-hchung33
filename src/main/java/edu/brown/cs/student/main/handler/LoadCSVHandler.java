@@ -27,7 +27,6 @@ public class LoadCSVHandler implements Route {
     Moshi moshiReturn = new Moshi.Builder().build();
     JsonAdapter<Map<String, String>> adapterReturn =
         moshiReturn.adapter(Types.newParameterizedType(Map.class, String.class, String.class));
-
     try {
       // Add to response map
       Map<String, List<List<String>>> responseMap = new HashMap<>();

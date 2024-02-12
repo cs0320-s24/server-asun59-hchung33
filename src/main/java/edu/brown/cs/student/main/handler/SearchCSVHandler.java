@@ -5,6 +5,7 @@ import com.squareup.moshi.Moshi;
 import com.squareup.moshi.Types;
 import edu.brown.cs.student.main.datasource.ParseDatasource;
 import edu.brown.cs.student.main.parser.CSVSearcher;
+import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,7 +23,6 @@ public class SearchCSVHandler implements Route {
   @Override
   public Object handle(Request request, Response response) {
     Moshi moshi = new Moshi.Builder().build();
-
     // Error message
     Map<String, String> errorJson = new HashMap<>();
     // Serialize the error message to a JSON string
@@ -32,22 +32,25 @@ public class SearchCSVHandler implements Route {
 
     try {
       String path = request.queryParams("path");
-      // TODO: get user input based on search
       String toSearch = request.queryParams("toSearch");
       String headerPresent = request.queryParams("headerPresent");
-      String columnIsNum = request.queryParams("columnIsNum");
-      String columnIDInteger = request.queryParams("columnIDInteger"); // only one header in list
-      String columnIDString = request.queryParams("columnIDString"); // only one header will be in list
+      String columnIDString =
+          request.queryParams("columnIDString"); // only one header will be in list
 
       if (this.state.getMap().containsKey(path)) {
         // Get the parsed data
         List<List<String>> parsedData = this.state.getParsed();
-        // TODO: change search to jsut take in parsed data
-        // TODO: search based on input
-        // TODO: use most to print out output
+        CSVSearcher<List<String>> searcher = new CSVSearcher<List<String>>(this.state.getCreator());
+        boolean headerPresentBool = Boolean.parseBoolean(headerPresent);
 
+        List<List<String>> foundRows =
+            searcher.searchCSV(toSearch, headerPresentBool, columnIDString, parsedData);
 
-
+        Type listListStringType =
+            Types.newParameterizedType(
+                List.class, Types.newParameterizedType(List.class, String.class));
+        JsonAdapter<List<List<String>>> adapter = moshi.adapter(listListStringType);
+        return adapter.toJson(foundRows);
       }
     } catch (Exception e) {
       errorJson.put("error", e.getMessage());

@@ -66,6 +66,7 @@ public class CSVUtility<T> {
       System.out.println("Enter column identifier number or name, separated by columns.");
       path = bReader.readLine();
       this.checkExit(path);
+
       List<String> columnIDString =
           Arrays.asList(regexSplitCSVRow.split(path)); // parse column identifiers
       columnIDString.replaceAll(CSVParser::postprocess);
@@ -82,6 +83,7 @@ public class CSVUtility<T> {
               false; // if not in number form, set as String to search for matching column names
         }
       }
+
       if (!this.search(toSearch, columnIDString, columnIDInteger, headerPresent, columnIsNum)) {
         System.out.println("Could not find target string!");
       }
@@ -147,8 +149,8 @@ public class CSVUtility<T> {
       boolean headerPresent,
       boolean columnIsNum)
       throws IOException, FactoryFailureException {
-    this.searcher = new CSVSearcher<List<String>>(this.parser, this.toCreate);
+    this.searcher = new CSVSearcher<List<String>>(this.toCreate);
     return this.searcher.searchHelper(
-        toSearch, headerPresent, columnIsNum, columnIdentifier, columnIDString);
+        this.parser, toSearch, headerPresent, columnIsNum, columnIdentifier, columnIDString);
   }
 }

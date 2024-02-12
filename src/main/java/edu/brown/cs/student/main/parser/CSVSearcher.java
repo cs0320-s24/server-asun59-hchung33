@@ -2,7 +2,10 @@ package edu.brown.cs.student.main.parser;
 
 import edu.brown.cs.student.main.FactoryFailureException;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  * This is the CSVSearcher class responsible for searching through the parsed CSV file to find a
@@ -11,6 +14,8 @@ import java.util.List;
  * @param <T> General Object for CSVSearcher
  */
 public class CSVSearcher<T> {
+  static final Pattern regexSplitCSVRow =
+      Pattern.compile(",(?=([^\\\"]*\\\"[^\\\"]*\\\")*(?![^\\\"]*\\\"))");
   private CSVParser<T> parser;
   private List<T> createdList;
   private CreatorFromRow<T> creator;
@@ -18,11 +23,9 @@ public class CSVSearcher<T> {
   /**
    * Constructor for CSVSearcher.
    *
-   * @param parser CSVParser created beforehand
    * @param creator Class implementing CreatorFromRow
    */
-  public CSVSearcher(CSVParser<T> parser, CreatorFromRow<T> creator) {
-    this.parser = parser;
+  public CSVSearcher(CreatorFromRow<T> creator) {
     this.creator = creator;
   }
 
@@ -45,13 +48,14 @@ public class CSVSearcher<T> {
    * @throws ArrayIndexOutOfBoundsException when there is a malformed row
    */
   public boolean searchHelper(
+      CSVParser<T> parser,
       String toSearch,
       boolean headerPresent,
       boolean columnIsNum,
       List<Integer> columnIDInteger,
       List<String> columnIDString)
       throws IOException, FactoryFailureException, ArrayIndexOutOfBoundsException {
-
+    this.parser = parser;
     this.createdList = this.parser.parse();
     boolean found = false;
 
@@ -91,5 +95,64 @@ public class CSVSearcher<T> {
       }
     }
     return found;
+  }
+
+  public List<List<String>> searchCSV(
+      String toSearch, boolean headerPresent, String columnIDString, List<List<String>> parsedData)
+      throws IOException, FactoryFailureException, ArrayIndexOutOfBoundsException {
+    List<List<String>> found = new ArrayList<List<String>>();
+
+    // adjust header appropriately
+    List<Integer> columnIDIntegerList = new ArrayList<Integer>();
+    List<String> columnIDStringList = Arrays.asList(regexSplitCSVRow.split(columnIDString));
+    int index = 0;
+    if (headerPresent) {
+      index += 1;
+    }
+    this.convertColumnStringToList(columnIDIntegerList, columnIDStringList);
+    for (int row = index; row < parsedData.size(); row++) {
+      this.storeFound(toSearch, found, columnIDIntegerList, row);
+    }
+    return found;
+  }
+
+  // NOTE: This method adds to the list of found rows, s
+  private List<List<String>> storeFound(
+      String toSearch, List<List<String>> found, List<Integer> columnIDIntegerList, int row)
+      throws FactoryFailureException {
+    if (columnIDIntegerList.isEmpty()) {
+      for (int col = 0; col < this.creator.getCol(); col++) {
+        if (this.creator.targetRow(toSearch, col, row)) {
+          found.add((List<String>) this.creator.getRow(row));
+        }
+      }
+    } else {
+      // searching through the columnIDInteger List
+      for (Integer integer : columnIDIntegerList) {
+        if (this.creator.targetRow(toSearch, integer, row)) {
+          found.add((List<String>) this.creator.getRow(row));
+        }
+      }
+    }
+    return found;
+  }
+
+  private void convertColumnStringToList(
+      List<Integer> columnIDIntegerList, List<String> columnIDStringList)
+      throws FactoryFailureException {
+    for (String s : columnIDStringList) {
+      try {
+        int ID = Integer.parseInt(s); // convert column identifier to Integer
+        if (!columnIDIntegerList.contains(ID)) {
+          columnIDIntegerList.add(ID);
+        }
+      } catch (NumberFormatException e) {
+        for (int addID = 0; addID < this.creator.getCol(); addID++) {
+          if (this.creator.targetRow(s, addID, 0) && !columnIDIntegerList.contains(addID)) {
+            columnIDIntegerList.add(addID);
+          }
+        }
+      }
+    }
   }
 }

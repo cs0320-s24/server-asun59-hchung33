@@ -22,7 +22,6 @@ public class ViewCSVHandler implements Route {
   @Override
   public Object handle(Request request, Response response) {
     Moshi moshi = new Moshi.Builder().build();
-
     // Error message
     Map<String, String> errorJson = new HashMap<>();
     // Serialize the error message to a JSON string
@@ -31,7 +30,6 @@ public class ViewCSVHandler implements Route {
         moshiError.adapter(
             Types.newParameterizedType(
                 Map.class, String.class, String.class)); // might not need two?
-
     try {
       String path = request.queryParams("path");
       if (this.state.getMap().containsKey(path)) {

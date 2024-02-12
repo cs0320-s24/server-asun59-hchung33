@@ -4,6 +4,7 @@ import static spark.Spark.after;
 
 import edu.brown.cs.student.main.datasource.ParseDatasource;
 import edu.brown.cs.student.main.handler.LoadCSVHandler;
+import edu.brown.cs.student.main.handler.SearchCSVHandler;
 import edu.brown.cs.student.main.handler.ViewCSVHandler;
 import spark.Spark;
 
@@ -24,6 +25,9 @@ public class Server {
 
     ViewCSVHandler viewCSVHandler = new ViewCSVHandler(datasource);
     Spark.get("viewCSVHandler", viewCSVHandler);
+
+    SearchCSVHandler searchCSVHandler = new SearchCSVHandler(datasource);
+    Spark.get("searchCSVHandler", searchCSVHandler);
 
     Spark.init();
     Spark.awaitInitialization();
