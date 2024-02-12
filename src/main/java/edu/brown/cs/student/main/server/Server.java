@@ -4,6 +4,7 @@ import static spark.Spark.after;
 
 import edu.brown.cs.student.main.datasource.ParseDatasource;
 import edu.brown.cs.student.main.handler.LoadCSVHandler;
+import edu.brown.cs.student.main.handler.ViewCSVHandler;
 import spark.Spark;
 
 public class Server {
@@ -17,9 +18,13 @@ public class Server {
           response.header("Access-Control-Allow-Methods", "*");
         });
 
-    LoadCSVHandler loadCSVHandler = new LoadCSVHandler(new ParseDatasource());
-
+    ParseDatasource datasource = new ParseDatasource();
+    LoadCSVHandler loadCSVHandler = new LoadCSVHandler(datasource);
     Spark.get("loadCSVHandler", loadCSVHandler);
+
+    ViewCSVHandler viewCSVHandler = new ViewCSVHandler(datasource);
+    Spark.get("viewCSVHandler", viewCSVHandler);
+
     Spark.init();
     Spark.awaitInitialization();
   }
