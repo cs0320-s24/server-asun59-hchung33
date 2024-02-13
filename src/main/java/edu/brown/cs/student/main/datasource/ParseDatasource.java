@@ -16,7 +16,6 @@ public class ParseDatasource implements Datasource {
 
   public ParseDatasource() {}
 
-
   public void parse(String path) throws FactoryFailureException, IOException {
     this.stringCreator = new StringCreator(); // Changed this into an instance variable
     FileReader reader = new FileReader(path);
