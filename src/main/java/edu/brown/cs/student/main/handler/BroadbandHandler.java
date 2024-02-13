@@ -15,6 +15,7 @@ import spark.Response;
 import spark.Route;
 
 public class BroadbandHandler implements Route {
+    private final static String APIKey= "808169d08601aed7dba214b43be6999b1909e403";
     public BroadbandHandler(){
 
     }
@@ -40,11 +41,14 @@ public class BroadbandHandler implements Route {
 
             String variable = "S2802_C03_022E";
 
+            // TODO: convert census numerical value
+            // Gear up +live code
+
         } catch (Exception e) {
             errorJson.put("error", e.getMessage());
             return adapterError.toJson(errorJson);
         }
-        errorJson.put("error", "File can not be viewed");
+        errorJson.put("error", "Can not retrieve data");
         return adapterError.toJson(errorJson);
     }
 }
