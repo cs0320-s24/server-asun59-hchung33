@@ -15,7 +15,7 @@ import spark.Response;
 import spark.Route;
 
 public class BroadbandHandler implements Route {
-    private final static String APIKey= "808169d08601aed7dba214b43be6999b1909e403";
+    private final static String API_Key= "808169d08601aed7dba214b43be6999b1909e403";
     public BroadbandHandler(){
 
     }
