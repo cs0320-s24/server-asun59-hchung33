@@ -15,8 +15,6 @@ import okio.Buffer;
 public class BroadbandDatasource implements Datasource {
   public BroadbandDatasource() {}
 
-  private static void getWifiData() {}
-
   public static List<List<String>> getStates() {
     try {
       URL requestURL =
@@ -48,6 +46,72 @@ public class BroadbandDatasource implements Datasource {
     }
   }
 
+  public List<List<String>> getCountyIDs() {
+    try {
+      URL requestURL =
+          new URL("https", "api.census.gov", "/data/2010/dec/sf1?get=NAME&for=county:*");
+      HttpURLConnection clientConnection = connect(requestURL);
+      Moshi moshi = new Moshi.Builder().build();
+
+      Type listListStringType =
+          Types.newParameterizedType(
+              List.class, Types.newParameterizedType(List.class, String.class));
+      JsonAdapter<List<List<String>>> adapter = moshi.adapter(listListStringType);
+
+      List<List<String>> body =
+          adapter.fromJson(new Buffer().readFrom(clientConnection.getInputStream()));
+      clientConnection.disconnect();
+
+      if (body == null || body.isEmpty()) {
+        throw new DatasourceException("Malformed response from ACS");
+      }
+      return body;
+    } catch (DatasourceException e) {
+      throw new RuntimeException(e);
+    } catch (MalformedURLException e) {
+      throw new RuntimeException(e);
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+  }
+  // need rto wrap
+  public List<List<String>> getWifiData(String stateID, String countyID) {
+    try {
+      URL requestURL =
+          new URL(
+              "https",
+              "api.census.gov",
+              "/data/2021/acs/acs1/subject/"
+                  + "variables?get=NAME,S2802_C03_022E&for=county:"
+                  + countyID
+                  + "&in=state:"
+                  + stateID);
+      HttpURLConnection clientConnection = connect(requestURL);
+      Moshi moshi = new Moshi.Builder().build();
+
+      Type listListStringType =
+          Types.newParameterizedType(
+              List.class, Types.newParameterizedType(List.class, String.class));
+      JsonAdapter<List<List<String>>> adapter = moshi.adapter(listListStringType);
+
+      List<List<String>> body =
+          adapter.fromJson(new Buffer().readFrom(clientConnection.getInputStream()));
+      clientConnection.disconnect();
+
+      if (body == null || body.isEmpty()) {
+        throw new DatasourceException("Malformed response from ACS");
+      }
+      System.out.println(body);
+      return body;
+    } catch (DatasourceException e) {
+      throw new RuntimeException(e);
+    } catch (MalformedURLException e) {
+      throw new RuntimeException(e);
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
   /**
    * Private helper method; throws IOException so different callers can handle differently if
    * needed.
@@ -63,8 +127,4 @@ public class BroadbandDatasource implements Datasource {
           "unexpected: API connection not success status " + clientConnection.getResponseMessage());
     return clientConnection;
   }
-
-  public record StateResponse(List<StateResponseProperties> properties) {}
-
-  public record StateResponseProperties(String NAME, String stateID) {}
 }

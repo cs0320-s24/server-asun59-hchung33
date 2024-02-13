@@ -15,10 +15,12 @@ public class BroadbandHandler implements Route {
   private static final String API_Key = "808169d08601aed7dba214b43be6999b1909e403";
   private final BroadbandDatasource state;
   private List<List<String>> statesIDs;
+  private List<List<String>> countyIDs;
 
   public BroadbandHandler(BroadbandDatasource state) {
     this.state = state;
     this.statesIDs = this.state.getStates();
+    this.countyIDs = this.state.getCountyIDs();
   }
 
   @Override
@@ -39,8 +41,6 @@ public class BroadbandHandler implements Route {
     String year = request.queryParams("year");
     String county = request.queryParams("county");
 
-    String variable = "S2802_C03_022E";
-
     if (state == null || year == null || county == null) {
       // Bad request! Send an error response.
       responseMap.put("error_type", "missing_parameter");
@@ -50,18 +50,17 @@ public class BroadbandHandler implements Route {
     try {
       // TODO: get state ID, Data, time
       // get state ID
-      String stateID = this.getStateId(state);
-      if (statesIDs.equals(-1)) {
-        errorJson.put("error", "Invalid State");
-        return adapterError.toJson(errorJson);
-      }
+      String stateID = this.getID(state, this.statesIDs);
+      String countyID = this.getID(county, this.countyIDs);
+      List<List<String>> wifiData = this.state.getWifiData(stateID, countyID);
+      System.out.println(wifiData);
 
       // get wifi data
       // Time and date data retrieved
       responseMap.put("Time", "1:00");
       responseMap.put("Date", "2:00");
       // State and county data retrieved
-      responseMap.put("State", stateID);
+      responseMap.put("State", state);
       responseMap.put("County", county);
       return adapterReturn.toJson(responseMap);
     } catch (Exception e) {
@@ -73,13 +72,13 @@ public class BroadbandHandler implements Route {
   /**
    * Helper method that searches through list of states to get the target state ID
    *
-   * @param state
+   * @param
    * @return
    */
-  private String getStateId(String state) {
-    for (int r = 0; r < this.statesIDs.size(); r++) {
-      if (this.statesIDs.get(r).get(0).equalsIgnoreCase(state)) {
-        return this.statesIDs.get(r).get(1);
+  private String getID(String place, List<List<String>> iterate) {
+    for (int r = 0; r < iterate.size(); r++) {
+      if (iterate.get(r).get(0).equalsIgnoreCase(place)) {
+        return iterate.get(r).get(1);
       }
     }
     return "fuck";
