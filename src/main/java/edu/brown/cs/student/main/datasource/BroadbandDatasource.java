@@ -62,7 +62,7 @@ public class BroadbandDatasource implements Datasource {
     return clientConnection;
   }
 
-  public record StateResponse(String id, StateResponseProperties properties) { }
+  public record StateResponse(StateResponseProperties properties) { }
   // Note: case matters! "gridID" will get populated with null, because "gridID" != "gridId"
-  public record StateResponseProperties(String NAME, String state) {}
+  public record StateResponseProperties(String NAME, String stateID) {}
 }
