@@ -47,8 +47,10 @@ public class BroadbandHandler implements Route {
         return adapterError.toJson(responseMap);
       }
       // get state ID
-      String stateID = this.getID(state, this.statesIDs);
-      String countyID = this.getID(county, this.countyIDs);
+      String stateID = this.getStateID(state);
+      String countyID = this.getCountyID(county, state);
+      System.out.println(stateID);
+      System.out.println(countyID);
       List<List<String>> wifiData = this.state.getWifiData(stateID, countyID);
       System.out.println(wifiData);
 
@@ -58,7 +60,6 @@ public class BroadbandHandler implements Route {
       responseMap.put("Date", "2:00");
       // State and county data retrieved
       responseMap.put("State", state);
-      System.out.println(state);
       responseMap.put("County", county);
       return adapterReturn.toJson(responseMap);
     } catch (Exception e) {
@@ -73,12 +74,24 @@ public class BroadbandHandler implements Route {
    * @param
    * @return
    */
-  private String getID(String place, List<List<String>> iterate) {
-    for (int r = 0; r < iterate.size(); r++) {
-      if (iterate.get(r).get(0).equalsIgnoreCase(place)) {
-        return iterate.get(r).get(1);
+  private String getStateID(String state) {
+    for (int r = 0; r < this.statesIDs.size(); r++) {
+      if (this.statesIDs.get(r).get(0).equalsIgnoreCase(state)) {
+        return this.statesIDs.get(r).get(1);
       }
     }
-    return "fuck";
+    return "Can't find state ID";
+  }
+
+  private String getCountyID(String county, String state) {
+    //    System.out.println(county + ", " + state);
+    //    System.out.println(this.countyIDs.get(1).get(0));
+    for (int r = 0; r < this.countyIDs.size(); r++) {
+      if (this.countyIDs.get(r).get(0).equalsIgnoreCase(county + ", " + state)) {
+        System.out.println("found county");
+        return this.countyIDs.get(r).get(1);
+      }
+    }
+    return "Can't find county ID";
   }
 }

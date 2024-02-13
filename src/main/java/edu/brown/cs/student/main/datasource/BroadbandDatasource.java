@@ -15,7 +15,7 @@ import okio.Buffer;
 public class BroadbandDatasource implements Datasource {
   public BroadbandDatasource() {}
 
-  public static List<List<String>> getStates() {
+  public List<List<String>> getStates() {
     try {
       URL requestURL =
           new URL("https", "api.census.gov", "/data/2010/dec/sf1?get=NAME&for=state:*");
@@ -34,8 +34,8 @@ public class BroadbandDatasource implements Datasource {
       if (body == null || body.isEmpty()) {
         throw new DatasourceException("Malformed response from ACS");
       }
-      System.out.println(body);
-      System.out.println();
+      //      System.out.println(body);
+      //      System.out.println();
       return body;
     } catch (DatasourceException e) {
       throw new RuntimeException(e);
@@ -77,15 +77,18 @@ public class BroadbandDatasource implements Datasource {
   // need rto wrap
   public List<List<String>> getWifiData(String stateID, String countyID) {
     try {
+      System.out.println("in get wifi data");
+      System.out.println(stateID);
+      System.out.println(countyID);
       URL requestURL =
           new URL(
               "https",
               "api.census.gov",
-              "/data/2021/acs/acs1/subject/"
-                  + "variables?get=NAME,S2802_C03_022E&for=county:"
+              "/data/2021/acs/acs1/subject/variables?get=NAME,S2802_C03_022E&for=county:"
                   + countyID
                   + "&in=state:"
                   + stateID);
+
       HttpURLConnection clientConnection = connect(requestURL);
       Moshi moshi = new Moshi.Builder().build();
 
@@ -97,11 +100,12 @@ public class BroadbandDatasource implements Datasource {
       List<List<String>> body =
           adapter.fromJson(new Buffer().readFrom(clientConnection.getInputStream()));
       clientConnection.disconnect();
+      System.out.println(body);
 
       if (body == null || body.isEmpty()) {
         throw new DatasourceException("Malformed response from ACS");
       }
-      System.out.println(body);
+      //      System.out.println(body);
       return body;
     } catch (DatasourceException e) {
       throw new RuntimeException(e);
