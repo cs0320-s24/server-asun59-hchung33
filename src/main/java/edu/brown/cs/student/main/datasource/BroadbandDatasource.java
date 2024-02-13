@@ -1,12 +1,16 @@
 package edu.brown.cs.student.main.datasource;
 
+import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
 import edu.brown.cs.student.main.FactoryFailureException;
+import okio.Buffer;
+
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.List;
 
 public class BroadbandDatasource implements Datasource {
   public BroadbandDatasource(){
@@ -15,21 +19,19 @@ public class BroadbandDatasource implements Datasource {
   private static void getWifiData(){
 
   }
-  private static void getStateID(){
+  public static StateResponse getStateID(){
     try{
       URL requestURL = new URL("https", "api.census.gov", "/data/2010/dec/sf1?get=NAME&for=state:*");
       HttpURLConnection clientConnection = connect(requestURL);
       Moshi moshi = new Moshi.Builder().build();
-      // NOTE WELL: THE TYPES GIVEN HERE WOULD VARY ANYTIME THE RESPONSE TYPE VARIES
-      JsonAdapter<GridResponse> adapter = moshi.adapter(GridResponse.class).nonNull();
-      // NOTE: important! pattern for handling the input stream
-      GridResponse body = adapter.fromJson(new Buffer().readFrom(clientConnection.getInputStream()));
+
+      JsonAdapter<StateResponse> adapter = moshi.adapter(StateResponse.class).nonNull();
+      StateResponse body = adapter.fromJson(new Buffer().readFrom(clientConnection.getInputStream()));
       clientConnection.disconnect();
-      if(body == null || body.properties() == null || body.properties().gridId() == null)
-        throw new DatasourceException("Malformed response from NWS");
+
+      if(body == null || body.properties() == null || body.properties().NAME() == null)
+        throw new DatasourceException("Malformed response from ACS");
       return body;
-
-
     } catch (DatasourceException e) {
       throw new RuntimeException(e);
     } catch (MalformedURLException e) {
@@ -55,4 +57,7 @@ public class BroadbandDatasource implements Datasource {
     return clientConnection;
   }
 
+  public record StateResponse(String id, StateResponseProperties properties) { }
+  // Note: case matters! "gridID" will get populated with null, because "gridID" != "gridId"
+  public record StateResponseProperties(String NAME, String state) {}
 }
