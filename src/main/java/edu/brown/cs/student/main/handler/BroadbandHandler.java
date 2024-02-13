@@ -37,18 +37,15 @@ public class BroadbandHandler implements Route {
     JsonAdapter<Map<String, String>> adapterReturn =
         moshiReturn.adapter(Types.newParameterizedType(Map.class, String.class, String.class));
 
-    String state = request.queryParams("state");
-    String year = request.queryParams("year");
-    String county = request.queryParams("county");
-
-    if (state == null || year == null || county == null) {
-      // Bad request! Send an error response.
-      responseMap.put("error_type", "missing_parameter");
-      return adapterError.toJson(responseMap);
-    }
     // get census data
     try {
-      // TODO: get state ID, Data, time
+      String state = request.queryParams("state");
+      String county = request.queryParams("county");
+      if (state == null || county == null) {
+        // Bad request! Send an error response.
+        responseMap.put("error_type", "missing_parameter");
+        return adapterError.toJson(responseMap);
+      }
       // get state ID
       String stateID = this.getID(state, this.statesIDs);
       String countyID = this.getID(county, this.countyIDs);
@@ -61,6 +58,7 @@ public class BroadbandHandler implements Route {
       responseMap.put("Date", "2:00");
       // State and county data retrieved
       responseMap.put("State", state);
+      System.out.println(state);
       responseMap.put("County", county);
       return adapterReturn.toJson(responseMap);
     } catch (Exception e) {
