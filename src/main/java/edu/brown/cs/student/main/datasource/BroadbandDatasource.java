@@ -19,6 +19,11 @@ public class BroadbandDatasource implements Datasource {
   private static void getWifiData(){
 
   }
+
+
+  public StateResponse getStateIDPublic(){
+    return getStateID();
+  }
   public static StateResponse getStateID(){
     try{
       URL requestURL = new URL("https", "api.census.gov", "/data/2010/dec/sf1?get=NAME&for=state:*");
