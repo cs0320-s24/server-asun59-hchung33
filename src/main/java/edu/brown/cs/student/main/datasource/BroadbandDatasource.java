@@ -77,7 +77,7 @@ public class BroadbandDatasource implements Datasource {
   // need rto wrap
   public List<List<String>> getWifiData(String stateID, String countyID) {
     try {
-      System.out.println("in get wifi data");
+      System.out.println("in g" + "et wifi data");
       System.out.println(stateID);
       System.out.println(countyID);
       URL requestURL =
@@ -88,14 +88,12 @@ public class BroadbandDatasource implements Datasource {
                   + countyID
                   + "&in=state:"
                   + stateID);
-
+      System.out.println("should work");
       HttpURLConnection clientConnection = connect(requestURL);
       Moshi moshi = new Moshi.Builder().build();
 
-      Type listListStringType =
-          Types.newParameterizedType(
-              List.class, Types.newParameterizedType(List.class, String.class));
-      JsonAdapter<List<List<String>>> adapter = moshi.adapter(listListStringType);
+      Type listType = Types.newParameterizedType(List.class, List.class);
+      JsonAdapter<List<List<String>>> adapter = moshi.adapter(listType);
 
       List<List<String>> body =
           adapter.fromJson(new Buffer().readFrom(clientConnection.getInputStream()));

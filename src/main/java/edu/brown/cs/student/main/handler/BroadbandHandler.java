@@ -89,7 +89,7 @@ public class BroadbandHandler implements Route {
     for (int r = 0; r < this.countyIDs.size(); r++) {
       if (this.countyIDs.get(r).get(0).equalsIgnoreCase(county + ", " + state)) {
         System.out.println("found county");
-        return this.countyIDs.get(r).get(1);
+        return this.countyIDs.get(r).get(2);
       }
     }
     return "Can't find county ID";
