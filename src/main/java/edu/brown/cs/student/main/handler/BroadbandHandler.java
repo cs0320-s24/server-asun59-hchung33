@@ -50,19 +50,18 @@ public class BroadbandHandler implements Route {
     try {
       // TODO: get state ID, Data, time
       // get state ID
-      int stateID = this.getStateId(state);
+      String stateID = this.getStateId(state);
       if (statesIDs.equals(-1)) {
         errorJson.put("error", "Invalid State");
         return adapterError.toJson(errorJson);
       }
-      // Get all data
-      int yearInt = Integer.parseInt(year);
+
       // get wifi data
       // Time and date data retrieved
-      responseMap.put("time", "1:00");
-      responseMap.put("data", "2:00");
+      responseMap.put("Time", "1:00");
+      responseMap.put("Date", "2:00");
       // State and county data retrieved
-      responseMap.put("State", state);
+      responseMap.put("State", stateID);
       responseMap.put("County", county);
       return adapterReturn.toJson(responseMap);
     } catch (Exception e) {
@@ -77,12 +76,12 @@ public class BroadbandHandler implements Route {
    * @param state
    * @return
    */
-  private int getStateId(String state) {
+  private String getStateId(String state) {
     for (int r = 0; r < this.statesIDs.size(); r++) {
-      if (this.statesIDs.get(r).get(0).equals(state)) {
-        return Integer.parseInt(this.statesIDs.get(r).get(1));
+      if (this.statesIDs.get(r).get(0).equalsIgnoreCase(state)) {
+        return this.statesIDs.get(r).get(1);
       }
     }
-    return -1;
+    return "fuck";
   }
 }
