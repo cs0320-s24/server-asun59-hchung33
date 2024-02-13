@@ -8,6 +8,7 @@ import edu.brown.cs.student.main.datasource.BroadbandDatasource;
 import edu.brown.cs.student.main.datasource.BroadbandDatasource.StateResponse;
 import edu.brown.cs.student.main.datasource.ParseDatasource;
 
+import edu.brown.cs.student.main.datasource.StateData;
 import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.List;
@@ -52,7 +53,7 @@ public class BroadbandHandler implements Route {
         // get census data
         try {
             // get state ID
-            StateResponse stateID = this.state.getStateIDPublic();
+            StateData stateID = this.state.getStateIDPublic();
             // Get all data
             int yearInt = Integer.parseInt(year);
 //          StateResponse wifiData = this.state.getStateIDPublic();
