@@ -21,9 +21,6 @@ public class BroadbandDatasource implements Datasource {
   }
 
 
-  public StateResponse getStateIDPublic(){
-    return getStateID();
-  }
   public static StateResponse getStateID(){
     try{
       URL requestURL = new URL("https", "api.census.gov", "/data/2010/dec/sf1?get=NAME&for=state:*");
@@ -36,6 +33,7 @@ public class BroadbandDatasource implements Datasource {
 
       if(body == null || body.properties() == null || body.properties().NAME() == null)
         throw new DatasourceException("Malformed response from ACS");
+
       return body;
     } catch (DatasourceException e) {
       throw new RuntimeException(e);
@@ -62,7 +60,30 @@ public class BroadbandDatasource implements Datasource {
     return clientConnection;
   }
 
-  public record StateResponse(StateResponseProperties properties) { }
-  // Note: case matters! "gridID" will get populated with null, because "gridID" != "gridId"
+  private static StateData getCurrentState(String name){
+    try{
+      URL requestURL = new URL("https", "api.census.gov", "/data/2010/dec/sf1?get=NAME&for=state:*");
+      HttpURLConnection clientConnection = connect(requestURL);
+      Moshi moshi = new Moshi.Builder().build();
+
+      JsonAdapter<StateResponse> adapter = moshi.adapter(StateResponse.class).nonNull();
+      StateResponse body = adapter.fromJson(new Buffer().readFrom(clientConnection.getInputStream()));
+      clientConnection.disconnect();
+
+      if(body == null || body.properties() == null || body.properties().NAME() == null)
+        throw new DatasourceException("Malformed response from ACS");
+
+      return body;
+    } catch (DatasourceException e) {
+      throw new RuntimeException(e);
+    } catch (MalformedURLException e) {
+      throw new RuntimeException(e);
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  public record StateResponse(List<StateResponseProperties> properties) { }
+
   public record StateResponseProperties(String NAME, String stateID) {}
 }
