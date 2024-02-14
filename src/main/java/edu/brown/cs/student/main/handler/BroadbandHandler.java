@@ -4,6 +4,11 @@ import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
 import com.squareup.moshi.Types;
 import edu.brown.cs.student.main.datasource.BroadbandDatasource;
+import java.lang.reflect.Type;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,11 +36,14 @@ public class BroadbandHandler implements Route {
     JsonAdapter<Map<String, String>> adapterError =
         moshiError.adapter(
             Types.newParameterizedType(Map.class, String.class, String.class)); // ERROR HANDLING
+    Map<String, String> errorResponse = new HashMap<>();
 
     Moshi moshiReturn = new Moshi.Builder().build();
-    Map<String, String> responseMap = new HashMap<>();
-    JsonAdapter<Map<String, String>> adapterReturn =
-        moshiReturn.adapter(Types.newParameterizedType(Map.class, String.class, String.class));
+    List<List<String>> responseList = new ArrayList<>();
+    Type listListStringType =
+        Types.newParameterizedType(
+            List.class, Types.newParameterizedType(List.class, String.class));
+    JsonAdapter<List<List<String>>> adapterReturn = moshiReturn.adapter(listListStringType);
 
     // get census data
     try {
@@ -43,25 +51,26 @@ public class BroadbandHandler implements Route {
       String county = request.queryParams("county");
       if (state == null || county == null) {
         // Bad request! Send an error response.
-        responseMap.put("error_type", "missing_parameter");
-        return adapterError.toJson(responseMap);
+        errorResponse.put("error_type", "missing_parameter");
+        return adapterError.toJson(errorResponse);
       }
       // get state ID
       String stateID = this.getStateID(state);
       String countyID = this.getCountyID(county, state);
-      System.out.println(stateID);
-      System.out.println(countyID);
-      List<List<String>> wifiData = this.state.getWifiData(stateID, countyID);
-      System.out.println(wifiData);
-
       // get wifi data
-      // Time and date data retrieved
-      responseMap.put("Time", "1:00");
-      responseMap.put("Date", "2:00");
-      // State and county data retrieved
-      responseMap.put("State", state);
-      responseMap.put("County", county);
-      return adapterReturn.toJson(responseMap);
+      List<List<String>> wifiData = this.state.getWifiData(stateID, countyID);
+      //      System.out.println(wifiData);
+      // Get the current date and time
+      LocalDateTime currentDateTime = LocalDateTime.now();
+      // You can also format the date and time using a specific pattern
+      DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+      String formattedDateTime = currentDateTime.format(formatter);
+
+      responseList.add(
+          new ArrayList<>(Arrays.asList("Date and time data retrieved: " + formattedDateTime,
+              "state: " + state, "county: " + county)));
+      responseList.addAll(wifiData);
+      return adapterReturn.toJson(responseList);
     } catch (Exception e) {
       errorJson.put("error", e.getMessage());
       return adapterError.toJson(errorJson);
