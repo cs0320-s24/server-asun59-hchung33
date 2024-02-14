@@ -19,7 +19,7 @@ import java.util.concurrent.TimeUnit;
 import okio.Buffer;
 
 public class BroadbandDatasource implements Datasource {
-  LoadingCache<String, List<List<String>>> cache;
+  LoadingCache<String, List<String>> cache;
 
   public BroadbandDatasource() {
     //    this.createCache();
@@ -65,20 +65,20 @@ public class BroadbandDatasource implements Datasource {
     //    this.cache = cache;
   }
 
-  public LoadingCache<String, List<List<String>>> altCache() {
-    LoadingCache<String, List<List<String>>> cache =
+  public LoadingCache<String, List<String>> altCache() {
+    LoadingCache<String, List<String>> cache =
         CacheBuilder.newBuilder()
             .maximumSize(100)
             .build(
-                new CacheLoader<String, List<List<String>>>() {
-                  public List<List<String>> load(String key) { // no checked exception
-                    return getWifiData(key.substring(0, 2), key.substring(2));
+                new CacheLoader<String, List<String>>() {
+                  public List<String> load(String key) { // no checked exception
+                    return getWifiData(key.substring(0, 2), key.substring(2)).get(1);
                   }
                 });
     return cache;
   }
 
-  public List<List<String>> TESTCACHE(String stateID, String countyID) throws ExecutionException {
+  public List<String> TESTCACHE(String stateID, String countyID) throws ExecutionException {
     System.out.println(this.cache.asMap());
     return this.cache.get(stateID + countyID);
   }

@@ -69,7 +69,7 @@ public class BroadbandHandler implements Route {
       //      List<List<String>> wifiData = this.state.getWifiData(stateID, countyID);
 
       // TESTING VERSION DELETE ME IF FAILS
-      List<List<String>> wifiData = this.state.TESTCACHE(stateID, countyID);
+      List<String> wifiData = this.state.TESTCACHE(stateID, countyID);
 
       //      System.out.println(wifiData);
       // Get the current date and time
@@ -84,7 +84,7 @@ public class BroadbandHandler implements Route {
                   "Date and time data retrieved: " + formattedDateTime,
                   "state: " + state,
                   "county: " + county)));
-      responseList.addAll(wifiData);
+      responseList.add(wifiData);
       return adapterReturn.toJson(responseList);
     } catch (Exception e) {
       errorJson.put("error", e.getMessage());
