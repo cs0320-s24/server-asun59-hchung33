@@ -64,8 +64,13 @@ public class BroadbandHandler implements Route {
       // get state ID using broadbandhandler parser
       //      String stateID = this.getStateID(state);
       //      String countyID = this.getCountyID(county, state);
-      // get wifi data
-      List<List<String>> wifiData = this.state.getWifiData(stateID, countyID);
+
+      // get wifi data ORIGINAL
+      //      List<List<String>> wifiData = this.state.getWifiData(stateID, countyID);
+
+      // TESTING VERSION DELETE ME IF FAILS
+      List<List<String>> wifiData = this.state.TESTCACHE(stateID, countyID);
+
       //      System.out.println(wifiData);
       // Get the current date and time
       LocalDateTime currentDateTime = LocalDateTime.now();
@@ -102,7 +107,7 @@ public class BroadbandHandler implements Route {
     return "Can't find state ID";
   }
 
-  //THESE R NO LONGER USED BC I HAVE A HASHMAP IN CACHINGBROADBAND WHICH I GUESS..IS A PROXY?
+  // THESE R NO LONGER USED BC I HAVE A HASHMAP IN CACHINGBROADBAND WHICH I GUESS..IS A PROXY?
   private String getCountyID(String county, String state) {
     //    System.out.println(county + ", " + state);
     //    System.out.println(this.countyIDs.get(1).get(0));
