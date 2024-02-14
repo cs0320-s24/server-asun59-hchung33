@@ -44,6 +44,15 @@
     </dependency>
 
     <!--
+         guava dependency import
+     -->
+    <dependency>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
+      <version>31.1-jre</version>
+    </dependency>
+
+    <!--
            Spark is a lightweight framework for creating web applications.
            Spark is most commonly used to create APIs and websites.
     -->
@@ -87,6 +96,7 @@
 
   </dependencies>
   <build>
+
     <plugins>
       <!--
             The Compiler Plugin is used to compile the sources of your project.

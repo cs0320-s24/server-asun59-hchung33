@@ -4,6 +4,7 @@ import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
 import com.squareup.moshi.Types;
 import edu.brown.cs.student.main.datasource.BroadbandDatasource;
+import edu.brown.cs.student.main.datasource.CachingBroadbandDatasource;
 import java.lang.reflect.Type;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -20,12 +21,14 @@ public class BroadbandHandler implements Route {
   private static final String API_Key = "808169d08601aed7dba214b43be6999b1909e403";
   private final BroadbandDatasource state;
   private List<List<String>> statesIDs;
-  private List<List<String>> countyIDs;
+  private List<List<String>> countyID;
+  private CachingBroadbandDatasource proxy;
 
   public BroadbandHandler(BroadbandDatasource state) {
     this.state = state;
-    this.statesIDs = this.state.getStates();
-    this.countyIDs = this.state.getCountyIDs();
+    this.statesIDs = state.getStates();
+    this.countyID = state.getCountyIDs();
+    this.proxy = new CachingBroadbandDatasource(state);
   }
 
   @Override
@@ -54,9 +57,13 @@ public class BroadbandHandler implements Route {
         errorResponse.put("error_type", "missing_parameter");
         return adapterError.toJson(errorResponse);
       }
-      // get state ID
-      String stateID = this.getStateID(state);
-      String countyID = this.getCountyID(county, state);
+
+      // getting stateID using my hashMap
+      String stateID = this.proxy.getStateID(state);
+      String countyID = this.proxy.getCountyID(county);
+      // get state ID using broadbandhandler parser
+      //      String stateID = this.getStateID(state);
+      //      String countyID = this.getCountyID(county, state);
       // get wifi data
       List<List<String>> wifiData = this.state.getWifiData(stateID, countyID);
       //      System.out.println(wifiData);
@@ -67,8 +74,11 @@ public class BroadbandHandler implements Route {
       String formattedDateTime = currentDateTime.format(formatter);
 
       responseList.add(
-          new ArrayList<>(Arrays.asList("Date and time data retrieved: " + formattedDateTime,
-              "state: " + state, "county: " + county)));
+          new ArrayList<>(
+              Arrays.asList(
+                  "Date and time data retrieved: " + formattedDateTime,
+                  "state: " + state,
+                  "county: " + county)));
       responseList.addAll(wifiData);
       return adapterReturn.toJson(responseList);
     } catch (Exception e) {
@@ -92,13 +102,14 @@ public class BroadbandHandler implements Route {
     return "Can't find state ID";
   }
 
+  //THESE R NO LONGER USED BC I HAVE A HASHMAP IN CACHINGBROADBAND WHICH I GUESS..IS A PROXY?
   private String getCountyID(String county, String state) {
     //    System.out.println(county + ", " + state);
     //    System.out.println(this.countyIDs.get(1).get(0));
-    for (int r = 0; r < this.countyIDs.size(); r++) {
-      if (this.countyIDs.get(r).get(0).equalsIgnoreCase(county + ", " + state)) {
+    for (int r = 0; r < this.countyID.size(); r++) {
+      if (this.countyID.get(r).get(0).equalsIgnoreCase(county + ", " + state)) {
         System.out.println("found county");
-        return this.countyIDs.get(r).get(2);
+        return this.countyID.get(r).get(2);
       }
     }
     return "Can't find county ID";
