@@ -6,7 +6,6 @@ import com.google.common.cache.LoadingCache;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Class that represents the ACS datasource, rather than incorporating it directly into your
@@ -30,7 +29,7 @@ public class CacheBroadbandDatasource {
     LoadingCache<String, List<String>> cache =
         CacheBuilder.newBuilder()
             .maximumSize(100)
-                .expireAfterWrite(Constants.EXPIRE_TIME_IN_SECONDS, Constants.TIME_SECOND)
+            .expireAfterWrite(Constants.EXPIRE_TIME_IN_SECONDS, Constants.TIME_SECOND)
             .build(
                 new CacheLoader<String, List<String>>() {
                   public List<String> load(String key) { // no checked exception
