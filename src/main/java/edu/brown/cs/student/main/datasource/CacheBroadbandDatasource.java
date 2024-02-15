@@ -41,8 +41,6 @@ public class CacheBroadbandDatasource {
   }
 
   public LoadingCache<String, List<String>> getCache() {
-    //TODO: delete later
-    System.out.println(cache.asMap());
     return this.cache;
   }
 
