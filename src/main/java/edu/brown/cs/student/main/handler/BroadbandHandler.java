@@ -34,7 +34,7 @@ public class BroadbandHandler implements Route {
     Moshi moshiError = new Moshi.Builder().build();
     JsonAdapter<Map<String, String>> adapterError =
         moshiError.adapter(
-            Types.newParameterizedType(Map.class, String.class, String.class)); // ERROR HANDLING
+            Types.newParameterizedType(Map.class, String.class, String.class));
     Map<String, String> errorResponse = new HashMap<>();
     // Serialize the ACS data response
     Moshi moshiReturn = new Moshi.Builder().build();
