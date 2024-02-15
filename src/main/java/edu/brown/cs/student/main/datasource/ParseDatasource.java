@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-public class ParseDatasource implements Datasource {
+public class ParseDatasource {
   List<List<String>> parsed;
   private Map<String, List<List<String>>> responseMap;
   public CreatorFromRow<List<String>> stringCreator;
@@ -17,7 +17,7 @@ public class ParseDatasource implements Datasource {
   public ParseDatasource() {}
 
   public void parse(String path) throws FactoryFailureException, IOException {
-    this.stringCreator = new StringCreator(); // Changed this into an instance variable
+    this.stringCreator = new StringCreator();
     FileReader reader = new FileReader(path);
     CSVParser<List<String>> parser = new CSVParser<List<String>>(reader, stringCreator);
     this.parsed = parser.parse();

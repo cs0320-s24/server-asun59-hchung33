@@ -1,8 +1,5 @@
 package edu.brown.cs.student.main.datasource;
 
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
 import com.squareup.moshi.Types;
@@ -16,20 +13,19 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 import okio.Buffer;
 
-public class BroadbandDatasource implements Datasource {
+public class BroadbandDatasource {
 
   public BroadbandDatasource() {
-    //    this.createCache();
-    //    this.cache = this.altCache();
   }
 
-  public List<List<String>> getStates() {
+  public List<List<String>> getStatesIDs() {
     try {
+      // Make web API call to get state IDs
       URL requestURL =
           new URL("https", "api.census.gov", "/data/2010/dec/sf1?get=NAME&for=state:*");
       HttpURLConnection clientConnection = connect(requestURL);
       Moshi moshi = new Moshi.Builder().build();
-
+      // Serialize output
       Type listListStringType =
           Types.newParameterizedType(
               List.class, Types.newParameterizedType(List.class, String.class));
@@ -52,32 +48,19 @@ public class BroadbandDatasource implements Datasource {
     }
   }
 
-  public LoadingCache<String, List<String>> altCache() {
-    LoadingCache<String, List<String>> cache =
-        CacheBuilder.newBuilder()
-            .maximumSize(100)
-            .build(
-                new CacheLoader<String, List<String>>() {
-                  public List<String> load(String key) { // no checked exception
-                    return getWifiData(key.substring(0, 2), key.substring(2)).get(1);
-                  }
-                });
-    return cache;
-  }
-
   public List<String> broadbandDataProxy(
       CacheBroadbandDatasource cache, String stateID, String countyID) throws ExecutionException {
-    System.out.println("Hi");
-    System.out.println(cache.getCache().asMap());
     return cache.getCache().get(stateID + countyID);
   }
 
   public List<List<String>> getCountyIDs() {
     try {
+      // Make web API call to get the county IDs
       URL requestURL =
           new URL("https", "api.census.gov", "/data/2010/dec/sf1?get=NAME&for=county:*");
       HttpURLConnection clientConnection = connect(requestURL);
       Moshi moshi = new Moshi.Builder().build();
+      // Serialize output
       Type listListStringType =
           Types.newParameterizedType(
               List.class, Types.newParameterizedType(List.class, String.class));
@@ -99,9 +82,9 @@ public class BroadbandDatasource implements Datasource {
     }
   }
 
-  // need rto wrap
-  public List<List<String>> getWifiData(String stateID, String countyID) {
+  public List<List<String>> getInternetData(String stateID, String countyID) {
     try {
+      // Make web API call to get internet data
       URL requestURL =
           new URL(
               "https",
@@ -112,7 +95,7 @@ public class BroadbandDatasource implements Datasource {
                   + stateID);
       HttpURLConnection clientConnection = connect(requestURL);
       Moshi moshi = new Moshi.Builder().build();
-
+      // Serialize output
       Type listType = Types.newParameterizedType(List.class, List.class);
       JsonAdapter<List<List<String>>> adapter = moshi.adapter(listType);
 

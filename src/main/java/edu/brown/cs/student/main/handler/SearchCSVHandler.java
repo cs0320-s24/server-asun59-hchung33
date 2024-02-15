@@ -22,14 +22,12 @@ public class SearchCSVHandler implements Route {
 
   @Override
   public Object handle(Request request, Response response) {
-    Moshi moshi = new Moshi.Builder().build();
-    // Error message
-    Map<String, String> errorJson = new HashMap<>();
     // Serialize the error message to a JSON string
+    Moshi moshi = new Moshi.Builder().build();
+    Map<String, String> errorJson = new HashMap<>();
     Moshi moshiError = new Moshi.Builder().build();
     JsonAdapter<Map<String, String>> adapterError =
         moshiError.adapter(Types.newParameterizedType(Map.class, String.class, String.class));
-
     try {
       String path = request.queryParams("path");
       String toSearch = request.queryParams("toSearch");
@@ -45,7 +43,7 @@ public class SearchCSVHandler implements Route {
 
         List<List<String>> foundRows =
             searcher.searchCSV(toSearch, headerPresentBool, columnIDString, parsedData);
-
+        // Serialize the output
         Type listListStringType =
             Types.newParameterizedType(
                 List.class, Types.newParameterizedType(List.class, String.class));
