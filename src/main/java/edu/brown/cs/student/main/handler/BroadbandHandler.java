@@ -61,7 +61,8 @@ public class BroadbandHandler implements Route {
 
       // getting stateID using my hashMap
       String stateID = this.proxy.getStateID(state);
-      String countyID = this.proxy.getCountyID(county);
+      //      String countyID = this.proxy.getCountyID(county);
+      String countyID = this.proxy.getLocID(county + " " + state);
       // get state ID using broadbandhandler parser
       //      String stateID = this.getStateID(state);
       //      String countyID = this.getCountyID(county, state);
