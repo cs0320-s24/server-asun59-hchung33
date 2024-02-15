@@ -14,7 +14,7 @@ import java.util.Map;
 public class CacheBroadbandDatasource {
   Map<String, String> stateMap;
   Map<String, String> countyMap;
-  Map<String, String> locationMap;
+  Map<String, String> countMap;
   BroadbandDatasource original;
   LoadingCache<String, List<String>> cache;
 
@@ -22,10 +22,8 @@ public class CacheBroadbandDatasource {
     this.original = original;
     this.stateMap = new HashMap<>();
     this.countyMap = new HashMap<>();
-    this.locationMap = new HashMap();
     this.stateToMap(original.getStatesIDs());
     this.countyToMap(original.getCountyIDs());
-    this.locationToMap(original.getCountyIDs());
   }
 
   public void makeCache() {
@@ -34,7 +32,7 @@ public class CacheBroadbandDatasource {
             .maximumSize(100)
             .expireAfterWrite(Constants.EXPIRE_TIME_IN_SECONDS, Constants.TIME_SECOND)
             .build(
-                new CacheLoader<String, List<String>>() {
+                new CacheLoader<>() {
                   public List<String> load(String key) {
                     return original.getInternetData(key.substring(0, 2), key.substring(2)).get(1);
                   }
@@ -43,6 +41,8 @@ public class CacheBroadbandDatasource {
   }
 
   public LoadingCache<String, List<String>> getCache() {
+    //TODO: delete later
+    System.out.println(cache.asMap());
     return this.cache;
   }
 
@@ -50,8 +50,8 @@ public class CacheBroadbandDatasource {
     return this.stateMap.get(name);
   }
 
-  public String getLocID(String stateCounty) {
-    return this.locationMap.get(stateCounty);
+  public String getCountyID(String stateCounty) {
+    return this.countyMap.get(stateCounty);
   }
 
   private void stateToMap(List<List<String>> states) {
@@ -59,20 +59,12 @@ public class CacheBroadbandDatasource {
       this.stateMap.put(s.get(0), s.get(1));
     }
   }
-  private void countyToMap(List<List<String>> county) {
 
-    for (int i = 1; i < county.size(); i++) {
-      List<String> s = county.get(i);
-      if (this.stateMap.get(s.get(0).split(", ")[1]).equals(s.get(1))) {
-        this.countyMap.put(s.get(0).split(", ")[0], s.get(2));
-      }
-    }
-  }
-  private void locationToMap(List<List<String>> county) {
+  private void countyToMap(List<List<String>> county) {
     for (int i = 1; i < county.size(); i++) {
       List<String> s = county.get(i);
       String wholeLoc = s.get(0).split(", ")[0] + " " + s.get(0).split(", ")[1];
-      this.locationMap.put(wholeLoc, s.get(2));
+      this.countyMap.put(wholeLoc, s.get(2));
     }
   }
 }

@@ -15,8 +15,7 @@ import okio.Buffer;
 
 public class BroadbandDatasource {
 
-  public BroadbandDatasource() {
-  }
+  public BroadbandDatasource() {}
 
   public List<List<String>> getStatesIDs() {
     try {

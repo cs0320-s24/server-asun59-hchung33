@@ -14,7 +14,6 @@ public class DatasourceException extends Exception {
     this.cause = null;
   }
 
-
   /**
    * Returns the Throwable provided (if any) as the root cause of this exception. We don't make a
    * defensive copy here because we don't anticipate mutation of the Throwable to be any issue, and

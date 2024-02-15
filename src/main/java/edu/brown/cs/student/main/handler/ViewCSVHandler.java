@@ -26,9 +26,7 @@ public class ViewCSVHandler implements Route {
     Map<String, String> errorJson = new HashMap<>();
     Moshi moshiError = new Moshi.Builder().build();
     JsonAdapter<Map<String, String>> adapterError =
-        moshiError.adapter(
-            Types.newParameterizedType(
-                Map.class, String.class, String.class));
+        moshiError.adapter(Types.newParameterizedType(Map.class, String.class, String.class));
     try {
       String path = request.queryParams("path");
       if (this.state.getMap().containsKey(path)) {

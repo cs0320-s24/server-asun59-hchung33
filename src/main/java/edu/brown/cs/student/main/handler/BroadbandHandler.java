@@ -55,7 +55,7 @@ public class BroadbandHandler implements Route {
 
       // getting stateID and countyID using hashMap
       String stateID = this.proxy.getStateID(state);
-      String countyID = this.proxy.getLocID(county + " " + state);
+      String countyID = this.proxy.getCountyID(county + " " + state);
       List<String> wifiData = this.state.broadbandDataProxy(this.proxy, stateID, countyID);
       // Get the current date and time
       LocalDateTime currentDateTime = LocalDateTime.now();
