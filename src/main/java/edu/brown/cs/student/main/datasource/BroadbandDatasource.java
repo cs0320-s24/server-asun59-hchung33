@@ -1,6 +1,5 @@
 package edu.brown.cs.student.main.datasource;
 
-import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -15,15 +14,13 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
 import okio.Buffer;
 
 public class BroadbandDatasource implements Datasource {
-  LoadingCache<String, List<String>> cache;
 
   public BroadbandDatasource() {
     //    this.createCache();
-    this.cache = this.altCache();
+    //    this.cache = this.altCache();
   }
 
   public List<List<String>> getStates() {
@@ -55,16 +52,6 @@ public class BroadbandDatasource implements Datasource {
     }
   }
 
-  /**
-   * This method creates the cache from Guava Library, which stores maximum 100 query data. TODO:
-   * decide on a real explusion policy
-   */
-  public void createCache() {
-    Cache<String, List<List<String>>> cache =
-        CacheBuilder.newBuilder().maximumSize(100).expireAfterWrite(30, TimeUnit.SECONDS).build();
-    //    this.cache = cache;
-  }
-
   public LoadingCache<String, List<String>> altCache() {
     LoadingCache<String, List<String>> cache =
         CacheBuilder.newBuilder()
@@ -78,9 +65,11 @@ public class BroadbandDatasource implements Datasource {
     return cache;
   }
 
-  public List<String> TESTCACHE(String stateID, String countyID) throws ExecutionException {
-    System.out.println(this.cache.asMap());
-    return this.cache.get(stateID + countyID);
+  public List<String> broadbandDataProxy(
+          CacheBroadbandDatasource cache, String stateID, String countyID) throws ExecutionException {
+    System.out.println("Hi");
+    System.out.println(cache.getCache().asMap());
+    return cache.getCache().get(stateID + countyID);
   }
 
   public List<List<String>> getCountyIDs() {
@@ -113,16 +102,6 @@ public class BroadbandDatasource implements Datasource {
   // need rto wrap
   public List<List<String>> getWifiData(String stateID, String countyID) {
     try {
-      System.out.println("in g" + "et wifi data");
-      System.out.println(stateID);
-      System.out.println(countyID);
-
-      //      if (this.cache.asMap().containsKey(stateID + countyID)) {
-      //        System.out.println(this.cache.asMap());
-      //        System.out.println("I will be getting from cache" + stateID + countyID);
-      //        return this.cache.asMap().get(stateID + countyID);
-      //      }
-
       URL requestURL =
           new URL(
               "https",
@@ -131,7 +110,6 @@ public class BroadbandDatasource implements Datasource {
                   + countyID
                   + "&in=state:"
                   + stateID);
-      System.out.println("should work");
       HttpURLConnection clientConnection = connect(requestURL);
       Moshi moshi = new Moshi.Builder().build();
 
@@ -141,15 +119,11 @@ public class BroadbandDatasource implements Datasource {
       List<List<String>> body =
           adapter.fromJson(new Buffer().readFrom(clientConnection.getInputStream()));
       clientConnection.disconnect();
-      System.out.println(body);
 
       if (body == null || body.isEmpty()) {
         throw new DatasourceException("Malformed response from ACS");
       }
 
-      //      this.cache.get(stateID + countyID);
-      // Store into cache since we couldn't find it before
-      //      this.cache.put(stateID + countyID, body);
       return body;
     } catch (DatasourceException e) {
       throw new RuntimeException(e);

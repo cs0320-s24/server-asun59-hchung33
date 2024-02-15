@@ -4,7 +4,7 @@ import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
 import com.squareup.moshi.Types;
 import edu.brown.cs.student.main.datasource.BroadbandDatasource;
-import edu.brown.cs.student.main.datasource.CachingBroadbandDatasource;
+import edu.brown.cs.student.main.datasource.CacheBroadbandDatasource;
 import java.lang.reflect.Type;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -22,13 +22,14 @@ public class BroadbandHandler implements Route {
   private final BroadbandDatasource state;
   private List<List<String>> statesIDs;
   private List<List<String>> countyID;
-  private CachingBroadbandDatasource proxy;
+  private CacheBroadbandDatasource proxy;
 
   public BroadbandHandler(BroadbandDatasource state) {
     this.state = state;
     this.statesIDs = state.getStates();
     this.countyID = state.getCountyIDs();
-    this.proxy = new CachingBroadbandDatasource(state);
+    this.proxy = new CacheBroadbandDatasource(state);
+    this.proxy.makeCache();
   }
 
   @Override
@@ -69,7 +70,7 @@ public class BroadbandHandler implements Route {
       //      List<List<String>> wifiData = this.state.getWifiData(stateID, countyID);
 
       // TESTING VERSION DELETE ME IF FAILS
-      List<String> wifiData = this.state.TESTCACHE(stateID, countyID);
+      List<String> wifiData = this.state.broadbandDataProxy(this.proxy, stateID, countyID);
 
       //      System.out.println(wifiData);
       // Get the current date and time
