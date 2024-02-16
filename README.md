@@ -1,13 +1,63 @@
-> **GETTING STARTED:** You must start from some combination of the CSV Sprint code that you and your partner ended up with. Please move your code directly into this repository so that the `pom.xml`, `/src` folder, etc, are all at this base directory.
-
-> **IMPORTANT NOTE**: In order to run the server, run `mvn package` in your terminal then `./run` (using Git Bash for Windows users). This will be the same as the first Sprint. Take notice when transferring this run sprint to your Sprint 2 implementation that the path of your Server class matches the path specified in the run script. Currently, it is set to execute Server at `edu/brown/cs/student/main/server/Server`. Running through terminal will save a lot of computer resources (IntelliJ is pretty intensive!) in future sprints.
-
 # Project Details
+**Project Name:** CSV
 
+**Team Members and Contributions:** Alyssa Sun (asun59), Hee Su Chung (hchung33) (20 hrs)
+
+**Link to Repo:** [repo](https://github.com/cs0320-s24/server-asun59-hchung33)
 # Design Choices
+- **Relationships between Classes/Interfaces:**
+    - **handler** is the package that has all the handlers that deal with a URLs end point request. 
+      - **BroadbandHandler** deals with receiving and returning the USA Census data.
+        - We utilize **dependency injection** by passing in broadbandDatasource into the parameters. 
+        This allows us to keep track of the caching, county IDs, and state IDs without having to 
+        constantly reinitialize and retrieve already created information.
+      - **LoadCSVHandler** deals with loading and parsing a file path requested. 
+        - We utilize **dependency injection** again by passing in datasource state, so we can store 
+        the file loaded so other handlers will be aware of the valid file loaded. 
+      - **viewCSVHandler** deals with returning and displaying the parsed file from loaded
+        - We utilize **dependency injection** once more by passing in datasource state, so we
+        know the file loaded that can be viewed. 
+        - We practiced **defensive programming** by error handling invalid files and printing 
+        a informative message instead of throwing an error and terminating the program.
+      - **SearchCSVHandler** deals with taking the loaded parsed file from LoadCSVHandler and 
+      searches through the file based on various requirements. 
+        - Same **dependency injection** as view utilized!
+      - We use **moshi** in all the handlers to **serialize** the data and have it be a valid JSON.
+    - **datasource** is the package that has all the datasources that deal implemetned the end point request
+- **Data Structures:** Mainly dealt with **lists and list of lists** as it was the simplest to
+  deal and search with. We used **hashmaps** for things such as countyIDs when we want to efficiently 
+  access data. We also used **loadedCache** from google's guava library to easily have a cache. 
 
 # Errors/Bugs
-
+There are no notable bugs in the program.
 # Tests
+There are two large components to this program.
+## Unit tests:
+Here we tested new code functionalities. This mainly focused on datasource classes. 
+Here I test that the county ID and state ID that we collect is valid. We also 
+test that correct errors are thrown accordingly. Forexample,
+if an invalid file path is passed in, it should throw a factor failure 
+exception. We also test that the parse functions correctly.
+This testing file is focusing on testing very specific functionalities 
+unlike integration testing. 
+## BackendIntegrationTesting
+Write JUnit integration tests that exercise the API server's various behaviors 
+(e.g., responding to correct requests, responding to ill-formed requests, ...)
+# How to...
+**Run Tests:** In the SRC folder there is a test folder. Double click the folder, and you will
+see two specific packages:
+- parseTesting
+- searchTesting
 
-# How to
+To run tests specific to searching, click on searchTesting then the class **SearchTest**. To test a
+specific @test, there is a green play button by each test method. Click on it to run that specific
+test. To test all searching related tests, click and play the very first play button on that file
+To run tests specific to parsing, click on parseTesting then the class **parseTest**. To test a
+specific @test, there is a green play button by each test method. Click on it to run that specific
+test. To test all parsing related tests, click and play the very first play button on that file
+
+**Build and Run Program:** The easiest ways to run the program is to enter **./run** in the terminal
+or find the **Main** class in **src/main/java/edu.brown.cs.student/endUser** and click the green
+play button at the top right. Then, the terminal will spit out prompts that you can respond to by
+typing an answer and clicking enter. If the input is invalid, you will restart the prompts. To exit
+the program, get back to the start of the prompts and enter **exit**. 
