@@ -61,7 +61,6 @@ public class BroadbandHandler implements Route {
       // Formatting time and date
       DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
       String formattedDateTime = currentDateTime.format(formatter);
-
       responseList.add(
           new ArrayList<>(
               Arrays.asList(
