@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 import okio.Buffer;
 
-public class BroadbandDatasource implements BroadbandData {
+public class BroadbandDatasource implements BroadbandInterface {
 
   /**
    * A datasource for statics on broadband use across country via ACS API. This class uses the API
@@ -28,6 +28,7 @@ public class BroadbandDatasource implements BroadbandData {
    *
    * @return List of List of Strings containing StateIDs
    */
+  @Override
   public List<List<String>> getStatesIDs() {
     try {
       // Make web API call to get state IDs
@@ -70,7 +71,8 @@ public class BroadbandDatasource implements BroadbandData {
    * @return List of String which is the broadband data
    * @throws ExecutionException When there is an error while retrieving the county data
    */
-  public List<String> broadbandDataProxy(
+  @Override
+  public BroadbandData broadbandDataProxy(
       CacheBroadbandDatasource cache, String stateID, String countyID) throws ExecutionException {
     return cache.getCache().get(stateID + countyID);
   }
@@ -82,11 +84,13 @@ public class BroadbandDatasource implements BroadbandData {
    *
    * @return
    */
+  @Override
   public List<List<String>> getCountyIDs() {
     try {
       // Make web API call to get the county IDs
       URL requestURL =
           new URL("https", "api.census.gov", "/data/2010/dec/sf1?get=NAME&for=county:*");
+
       HttpURLConnection clientConnection = connect(requestURL);
       Moshi moshi = new Moshi.Builder().build();
       // Serialize output
@@ -101,6 +105,7 @@ public class BroadbandDatasource implements BroadbandData {
       if (body == null || body.isEmpty()) {
         throw new DatasourceException("Malformed response from ACS");
       }
+
       return body;
     } catch (DatasourceException e) {
       throw new RuntimeException(e);
@@ -119,7 +124,8 @@ public class BroadbandDatasource implements BroadbandData {
    * @param countyID ID for the county
    * @return List of List of Strings which is the resulting data
    */
-  public List<List<String>> getInternetData(String stateID, String countyID) {
+  @Override
+  public BroadbandData getInternetData(String stateID, String countyID) {
     try {
       // Make web API call to get internet data
       URL requestURL =
@@ -143,7 +149,9 @@ public class BroadbandDatasource implements BroadbandData {
       if (body == null || body.isEmpty()) {
         throw new DatasourceException("Malformed response from ACS");
       }
-      return body;
+
+      return new BroadbandData(body.get(1).get(1));
+
     } catch (DatasourceException e) {
       throw new RuntimeException(e);
     } catch (MalformedURLException e) {

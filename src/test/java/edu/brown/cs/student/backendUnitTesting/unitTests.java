@@ -82,7 +82,9 @@ public class unitTests {
         });
     // Valid Parsing
     this.parseDatasource.parse(
-        "/Users/lianli/Desktop/cs32/" + "server-asun59-hchung33/data/house/house.csv");
+        //        "/Users/lianli/Desktop/cs32/" + "server-asun59-hchung33/data/house/house.csv"
+        "/Users/julie_chung/Desktop/cs32/server-asun59-hchung33/data/house/house.csv");
+
     assertEquals(
         List.of(
             List.of("Julie's House", "2014", "Red"),

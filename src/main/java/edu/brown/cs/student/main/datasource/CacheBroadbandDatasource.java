@@ -15,10 +15,10 @@ public class CacheBroadbandDatasource {
   Map<String, String> stateMap;
   Map<String, String> countyMap;
   Map<String, String> countMap;
-  BroadbandDatasource original;
-  LoadingCache<String, List<String>> cache;
+  BroadbandInterface original;
+  LoadingCache<String, BroadbandData> cache;
 
-  public CacheBroadbandDatasource(BroadbandDatasource original) {
+  public CacheBroadbandDatasource(BroadbandInterface original) {
     this.original = original;
     this.stateMap = new HashMap<>();
     this.countyMap = new HashMap<>();
@@ -27,20 +27,20 @@ public class CacheBroadbandDatasource {
   }
 
   public void makeCache() {
-    LoadingCache<String, List<String>> cache =
+    LoadingCache<String, BroadbandData> cache =
         CacheBuilder.newBuilder()
             .maximumSize(100)
             .expireAfterWrite(Constants.EXPIRE_TIME_IN_SECONDS, Constants.TIME_SECOND)
             .build(
                 new CacheLoader<>() {
-                  public List<String> load(String key) {
-                    return original.getInternetData(key.substring(0, 2), key.substring(2)).get(1);
+                  public BroadbandData load(String key) {
+                    return original.getInternetData(key.substring(0, 2), key.substring(2));
                   }
                 });
     this.cache = cache;
   }
 
-  public LoadingCache<String, List<String>> getCache() {
+  public LoadingCache<String, BroadbandData> getCache() {
     return this.cache;
   }
 
