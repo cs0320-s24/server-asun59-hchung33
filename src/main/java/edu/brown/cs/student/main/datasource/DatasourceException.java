@@ -9,6 +9,10 @@ public class DatasourceException extends Exception {
   // The root cause of this datasource problem
   private final Throwable cause;
 
+  /**
+   * This is the constructor for the DatasourceException.
+   * @param message
+   */
   public DatasourceException(String message) {
     super(message); // Exception message
     this.cause = null;
