@@ -13,13 +13,29 @@ import spark.Request;
 import spark.Response;
 import spark.Route;
 
+/**
+ * This is the SearchCSVHandler that serves as an endpoint for searching through
+ * a specific CSV file specified by the user.
+ */
 public class SearchCSVHandler implements Route {
   private final ParseDatasource state;
 
+  /**
+   * This is the constructor for SearchCSVHandler, which takes in a ParseDatasource.
+   * @param state ParseDatasource that keeps track of data across CSVHandlers
+   */
   public SearchCSVHandler(ParseDatasource state) {
     this.state = state;
   }
 
+  /**
+   * This handles the request to this endpoint. It takes in required inputs to the
+   * CSVSearcher such as path, toSearch, headerPresent, and columnIDString, and performs
+   * search by calling searchCSV. Then, it returns the found rows as a Json Object.
+   * @param request Request of the user
+   * @param response Response to the user
+   * @return Json Object of the found rows
+   */
   @Override
   public Object handle(Request request, Response response) {
     // Serialize the error message to a JSON string
@@ -49,7 +65,6 @@ public class SearchCSVHandler implements Route {
         List<List<String>> parsedData = this.state.getParsed();
         CSVSearcher<List<String>> searcher = new CSVSearcher<List<String>>(this.state.getCreator());
         boolean headerPresentBool = Boolean.parseBoolean(headerPresent);
-
         List<List<String>> foundRows =
             searcher.searchCSV(toSearch, headerPresentBool, columnIDString, parsedData);
         // Serialize the output
