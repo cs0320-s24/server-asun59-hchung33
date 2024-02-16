@@ -14,7 +14,6 @@ import java.util.Map;
 public class CacheBroadbandDatasource {
   Map<String, String> stateMap;
   Map<String, String> countyMap;
-  Map<String, String> countMap;
   BroadbandInterface original;
   LoadingCache<String, BroadbandData> cache;
 

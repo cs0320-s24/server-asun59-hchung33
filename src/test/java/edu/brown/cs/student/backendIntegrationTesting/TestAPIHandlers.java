@@ -268,7 +268,9 @@ public class TestAPIHandlers {
     assertEquals(200, clientConnection1.getResponseCode());
     List<List<String>> response =
             this.listAdapter.fromJson(new Buffer().readFrom(clientConnection1.getInputStream()));
-    assertEquals(List.of("Sebastian County, Arkansas", "80.0", "05", "131"), response.get(1));
+    assertEquals("state: Arkansas", response.get(0).get(2));
+    assertEquals("county: Sebastian County", response.get(0).get(3));
+    assertEquals("Percentage: 80.0", response.get(0).get(4));
     clientConnection1.disconnect();
 
     // County overlaps with another states
@@ -276,7 +278,9 @@ public class TestAPIHandlers {
             tryRequest("broadbandDatasource?" + "state=California&county=Kings%20County");
     assertEquals(200, clientConnection2.getResponseCode());
     response = this.listAdapter.fromJson(new Buffer().readFrom(clientConnection2.getInputStream()));
-    assertEquals(List.of("Kings County, California", "83.5", "06", "031"), response.get(1));
+    assertEquals("state: California", response.get(0).get(2));
+    assertEquals("county: Kings County", response.get(0).get(3));
+    assertEquals("Percentage: 83.5", response.get(0).get(4));
     clientConnection2.disconnect();
 
     // Invalid state
@@ -305,7 +309,6 @@ public class TestAPIHandlers {
 
     // Mock data initialization
     BroadbandInterface mock = new MockBroadbandDatasource("80.0");
-    CacheBroadbandDatasource mockCache = new CacheBroadbandDatasource(mock);
     String mockData = mock.getInternetData("05", "131").data();
 
     // Get the current date and time
@@ -335,27 +338,24 @@ public class TestAPIHandlers {
             tryRequest("broadbandDatasource?" + "state=New%20York&county=Kings%20County");
     assertEquals(200, clientConnectionSleep.getResponseCode());
     clientConnectionSleep.disconnect();
-    Thread.sleep(12000);
+    Thread.sleep(5000);
     assertEquals(new HashMap<>(this.broadbandHandler.getCache().asMap()), Collections.emptyMap());
 
     // Basic census call case checking cache
     HttpURLConnection clientConnection1 =
             tryRequest("broadbandDatasource?" + "state=Arkansas&county=Sebastian%20County");
     assertEquals(200, clientConnection1.getResponseCode());
-
-    assertEquals(
-            List.of(List.of("Sebastian County, Arkansas", "80.0", "05", "131")),
-            new ArrayList<>(this.broadbandHandler.getCache().asMap().values()));
+    assertEquals("80.0",
+            this.broadbandHandler.getCache().asMap().get("05131").data());
     clientConnection1.disconnect();
 
     HttpURLConnection clientConnection2 =
             tryRequest("broadbandDatasource?" + "state=California&county=Kings%20County");
     assertEquals(200, clientConnection2.getResponseCode());
-    assertEquals(
-            List.of(
-                    List.of("Sebastian County, Arkansas", "80.0", "05", "131"),
-                    List.of("Kings County, California", "83.5", "06", "031")),
-            new ArrayList<>(this.broadbandHandler.getCache().asMap().values()));
+    assertEquals("80.0",
+        this.broadbandHandler.getCache().asMap().get("05131").data());
+    assertEquals("83.5",
+        this.broadbandHandler.getCache().asMap().get("06031").data());
     clientConnection2.disconnect();
 
     // Test values will delete once size reaches max (in this case 3)
