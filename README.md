@@ -23,7 +23,21 @@
       searches through the file based on various requirements. 
         - Same **dependency injection** as view utilized!
       - We use **moshi** in all the handlers to **serialize** the data and have it be a valid JSON.
-    - **datasource** is the package that has all the datasources that deal implemetned the end point request
+  - **datasource** is the package that hall the Datasource classes for CSVHandlers and BroadbandHandler.
+    - **ParseDatasource** is the class that keeps track of parsed CSV data from the user's provided file path input so
+      that the  can access the same CSV file in SearchCSVHandler and ViewCSVHandler.
+    - **BroadbandInterface** is an interface implemented by BroadbandDatasource and MockBroadbandDatasource to
+      ensure that we can test using mock data without making excessive API queries.
+    - **BroadbandDatasource** takes care of making API queries to ACS for state IDs, county IDs, and actual data
+      involving percentage representing broadband access in the user's inputted county.
+    - **CacheBroadbandDatasource** serves as our **proxy** by utilizing **Googles Guava Library**, allowing us to utilize
+      LoadingCache to reduce excessive API requests. If a query has recently been made, it is stored in the LoadingCache and can
+      be quickly accessed if it gets queried again. Otherwise, it would call getInternetData on the BroadbandDatasource to
+      actually make the API request. For the expiration policy, external developers can modify the policy by going to the
+      **Constants** class, which allows for **strategy pattern**, allowing them to decide the specific interval that they want query entries
+      to be removed.
+      -**BroadbandData** is a record class that keeps track of the actual data being the broadband percentage at the given county. This is implemented to
+      make Mock data testing easier.
 - **Data Structures:** Mainly dealt with **lists and list of lists** as it was the simplest to
   deal and search with. We used **hashmaps** for things such as countyIDs when we want to efficiently 
   access data. We also used **loadedCache** from google's guava library to easily have a cache. 
