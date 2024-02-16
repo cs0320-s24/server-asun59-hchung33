@@ -3,26 +3,15 @@ package edu.brown.cs.student.backendUnitTesting;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.testng.AssertJUnit.assertEquals;
-
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
 import edu.brown.cs.student.main.FactoryFailureException;
-import edu.brown.cs.student.main.creator.StringCreator;
 import edu.brown.cs.student.main.datasource.BroadbandDatasource;
 import edu.brown.cs.student.main.datasource.CacheBroadbandDatasource;
-import edu.brown.cs.student.main.datasource.Constants;
 import edu.brown.cs.student.main.datasource.DatasourceException;
 import edu.brown.cs.student.main.datasource.ParseDatasource;
-import edu.brown.cs.student.main.parser.CSVParser;
-import edu.brown.cs.student.main.parser.CreatorFromRow;
-import java.io.FileReader;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import org.junit.jupiter.api.Test;
 
 
@@ -83,53 +72,19 @@ public class unitTests {
   }
 
   @Test
-  public void testParseDatasource(){
+  public void testParseDatasource() throws IOException, FactoryFailureException {
     // Ensures parse works and throws correctly
-
+    // Throws when invalid file path
+    assertThrows(
+        IOException.class,
+        () -> {
+          this.parseDatasource.parse("invalid!");
+        });
+    // Valid Parsing
+    this.parseDatasource.parse("/Users/lianli/Desktop/cs32/"
+        + "server-asun59-hchung33/data/house/house.csv");
+    assertEquals(List.of(List.of("Julie's House", "2014", "Red"),
+        List.of("Grace's House", "2017", "Green"), List.of("Steele's House", "2017", "Blue"),
+        List.of("Kassie's House", "2018", "Yellow")),this.parseDatasource.getParsed());
   }
-
-
-  /**
-   * Testing new/adjusted version of search
-   */
-
-  package edu.brown.cs.student.main.datasource;
-
-import edu.brown.cs.student.main.FactoryFailureException;
-import edu.brown.cs.student.main.creator.StringCreator;
-import edu.brown.cs.student.main.parser.CSVParser;
-import edu.brown.cs.student.main.parser.CreatorFromRow;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-
-
-    public void parse(String path) throws FactoryFailureException, IOException {
-      this.stringCreator = new StringCreator();
-      FileReader reader = new FileReader(path);
-      CSVParser<List<String>> parser = new CSVParser<List<String>>(reader, stringCreator);
-      this.parsed = parser.parse();
-    }
-
-    public CreatorFromRow<List<String>> getCreator() {
-      return this.stringCreator;
-    }
-
-    public List<List<String>> getParsed() {
-      return this.parsed;
-    }
-
-    public void setMap(Map<String, List<List<String>>> responseMap) {
-      this.responseMap = responseMap;
-    }
-
-    public Map<String, List<List<String>>> getMap() {
-      return this.responseMap;
-    }
-  }
-
-
-
-
 }
