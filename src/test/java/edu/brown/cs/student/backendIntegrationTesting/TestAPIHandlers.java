@@ -169,13 +169,19 @@ public class TestAPIHandlers {
   }
 
   @Test
-  public void testSearchHandler(){
+  public void testSearchHandler() throws IOException {
     HttpURLConnection clientConnection1 =
         tryRequest(
             "searchCSVHandler?"
-                + "path=data/house/house.csv");
+                + "path=data/census/dol_ri_earnings_disparity.csv"
+                + "&toSearch=Black&headerPresent=true&columnIDString=1");
     // API connection works
     assertEquals(200, clientConnection1.getResponseCode());
+    // Test error because no file loaded
+    Map<String, String> response =
+        this.mapAdapter.fromJson(new Buffer().readFrom(clientConnection1.getInputStream()));
+    assertEquals("File can not be searched", response.get("error"));
+    clientConnection1.disconnect();
   }
 
 
