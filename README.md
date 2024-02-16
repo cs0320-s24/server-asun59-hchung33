@@ -43,18 +43,24 @@ unlike integration testing.
 ## BackendIntegrationTesting
 Write JUnit integration tests that exercise the API server's various behaviors 
 (e.g., responding to correct requests, responding to ill-formed requests, ...)
-# How to...
-**Run Tests:** In the SRC folder there is a test folder. Double click the folder, and you will
-see two specific packages:
-- parseTesting
-- searchTesting
+Here, we test all the handlers and ensure that the response is 
+as expected. We test that we are able to load, view, search,
+and retrieve data from the USA census, and that caching stores and deletes 
+correctly. We made **mock** tests, so we do not have to consistently
+spam and retrieve data from the API. 
 
-To run tests specific to searching, click on searchTesting then the class **SearchTest**. To test a
+# How to...
+**Run Tests:** In the SRC folder there is a test folder. Doubleclick the folder, and you will
+see two specific packages:
+- unitTests
+- backendIntegrationTesting
+To run tests specific to unitTests, click on unitTests then the class **unitTests**. To test a
 specific @test, there is a green play button by each test method. Click on it to run that specific
 test. To test all searching related tests, click and play the very first play button on that file
-To run tests specific to parsing, click on parseTesting then the class **parseTest**. To test a
+To run tests specific to integration testing, click on backendIntegrationTesting then the class
+**TestAPIHandlers**. To test a
 specific @test, there is a green play button by each test method. Click on it to run that specific
-test. To test all parsing related tests, click and play the very first play button on that file
+test. 
 
 **Build and Run Program:** The easiest ways to run the program is to enter **./run** in the terminal
 or find the **Main** class in **src/main/java/edu.brown.cs.student/endUser** and click the green
