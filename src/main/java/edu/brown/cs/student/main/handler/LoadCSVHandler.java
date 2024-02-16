@@ -30,6 +30,9 @@ public class LoadCSVHandler implements Route {
     try {
       // Add to response map
       Map<String, List<List<String>>> responseMap = new HashMap<>();
+      if (request.queryParams("path") == null || request.queryParams("path").isBlank()) {
+        throw new Exception("Invalid Query");
+      }
       String path = request.queryParams("path");
       this.state.parse(path);
       this.parsed = this.state.getParsed();

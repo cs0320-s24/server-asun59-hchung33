@@ -33,8 +33,7 @@ public class BroadbandHandler implements Route {
     // Serialize the error message to a JSON string
     Moshi moshiError = new Moshi.Builder().build();
     JsonAdapter<Map<String, String>> adapterError =
-        moshiError.adapter(
-            Types.newParameterizedType(Map.class, String.class, String.class));
+        moshiError.adapter(Types.newParameterizedType(Map.class, String.class, String.class));
     Map<String, String> errorResponse = new HashMap<>();
     // Serialize the ACS data response
     Moshi moshiReturn = new Moshi.Builder().build();
@@ -45,14 +44,14 @@ public class BroadbandHandler implements Route {
     JsonAdapter<List<List<String>>> adapterReturn = moshiReturn.adapter(listListStringType);
     // get census data
     try {
+      if (request.queryParams("state") == null
+          || request.queryParams("county") == null
+          || request.queryParams("state").isBlank()
+          || request.queryParams("county").isBlank()) {
+        throw new Exception("Invalid Query");
+      }
       String state = request.queryParams("state");
       String county = request.queryParams("county");
-      if (state == null || county == null) {
-        // Bad request! Send an error response.
-        errorResponse.put("error_type", "missing_parameter");
-        return adapterError.toJson(errorResponse);
-      }
-
       // getting stateID and countyID using hashMap
       String stateID = this.proxy.getStateID(state);
       String countyID = this.proxy.getCountyID(county + " " + state);

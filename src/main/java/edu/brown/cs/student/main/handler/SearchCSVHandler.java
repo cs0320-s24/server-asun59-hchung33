@@ -29,6 +29,16 @@ public class SearchCSVHandler implements Route {
     JsonAdapter<Map<String, String>> adapterError =
         moshiError.adapter(Types.newParameterizedType(Map.class, String.class, String.class));
     try {
+      if (request.queryParams("path") == null
+          || request.queryParams("toSearch") == null
+          || request.queryParams("headerPresent") == null
+          || request.queryParams("columnIDString") == null
+          || request.queryParams("path").isBlank()
+          || request.queryParams("toSearch").isBlank()
+          || request.queryParams("headerPresent").isBlank()
+          || request.queryParams("columnIDString").isBlank()) {
+        throw new Exception("Invalid Query");
+      }
       String path = request.queryParams("path");
       String toSearch = request.queryParams("toSearch");
       String headerPresent = request.queryParams("headerPresent");

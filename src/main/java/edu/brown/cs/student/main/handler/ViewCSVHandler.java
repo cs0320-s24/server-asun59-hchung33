@@ -28,8 +28,11 @@ public class ViewCSVHandler implements Route {
     JsonAdapter<Map<String, String>> adapterError =
         moshiError.adapter(Types.newParameterizedType(Map.class, String.class, String.class));
     try {
+      if (request.queryParams("path") == null || request.queryParams("path").isBlank()) {
+        throw new Exception("Invalid Query");
+      }
       String path = request.queryParams("path");
-      if (this.state.getMap().containsKey(path)) {
+      if (this.state.getMap() != null && this.state.getMap().containsKey(path)) {
         // Get the parsed data
         List<List<String>> parsedData = this.state.getParsed();
         // Serialize the parsed data to a JSON string

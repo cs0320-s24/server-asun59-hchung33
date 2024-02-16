@@ -118,8 +118,7 @@ public class BroadbandDatasource {
 
   /**
    * Private helper method; throws IOException so different callers can handle differently if
-   * needed.
-   * NOTE: Made public for testing!!!!
+   * needed. NOTE: Made public for testing!!!!
    */
   public HttpURLConnection connect(URL requestURL) throws DatasourceException, IOException {
     URLConnection urlConnection = requestURL.openConnection();
