@@ -58,6 +58,9 @@ public class unitTests {
         });
   }
 
+  /**
+   * Testing cacheBoradband data source
+   */
   @Test
   public void testCacheBroadbandDatasource() {
     // Test getStateID gets the correct state ID from state ID map created
@@ -71,6 +74,11 @@ public class unitTests {
     assertEquals("169", this.cacheBroadbandDatasource.getCountyID("Saline County Kansas"));
   }
 
+  /**
+   * Testing parse datasource
+   * @throws IOException
+   * @throws FactoryFailureException
+   */
   @Test
   public void testParseDatasource() throws IOException, FactoryFailureException {
     // Ensures parse works and throws correctly

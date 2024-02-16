@@ -24,19 +24,24 @@ import org.junit.jupiter.api.*;
 import spark.Spark;
 
 public class TestAPIHandlers {
+
+  /**
+   * Set up all variables and servers before running integration test
+   */
   @BeforeAll
   public static void setup_before_everything() {
     Spark.port(0);
     Logger.getLogger("").setLevel(Level.WARNING); // empty name = root logger
   }
-  // How do i make this final?
   BroadbandDatasource ACSData = new BroadbandDatasource();
   ParseDatasource CSVData = new ParseDatasource();
   JsonAdapter<Map<String, String>> mapAdapter;
   JsonAdapter<List<List<String>>> listAdapter;
 
   BroadbandHandler broadbandHandler;
-
+  /**
+   * Starting servers before testing
+   */
   @BeforeEach
   public void setup() {
     Moshi moshi = new Moshi.Builder().build();
@@ -65,6 +70,9 @@ public class TestAPIHandlers {
     Spark.awaitInitialization(); // don't continue until the server is listening
   }
 
+  /**
+   * Clean up after calls
+   */
   @AfterEach
   public void tearUp() {
     Spark.unmap("loadCSVHandler");
@@ -77,6 +85,12 @@ public class TestAPIHandlers {
     Spark.awaitStop();
   }
 
+  /**
+   * Helper method to make HTTP calls
+   * @param apiCall
+   * @return the client connection status
+   * @throws IOException
+   */
   private static HttpURLConnection tryRequest(String apiCall) throws IOException {
     // Configure the connection (but don't actually send the request yet)
     URL requestURL = new URL("http://localhost:" + Spark.port() + "/" + apiCall);
@@ -87,6 +101,10 @@ public class TestAPIHandlers {
     return clientConnection;
   }
 
+  /**
+   * Testing CSV server load handler
+   * @throws IOException
+   */
   @Test
   public void testLoadAPI() throws IOException {
     HttpURLConnection clientConnection1 =
@@ -124,6 +142,10 @@ public class TestAPIHandlers {
     clientConnection4.disconnect();
   }
 
+  /**
+   * Testing the CSV Server view handler
+   * @throws IOException
+   */
   @Test
   public void testViewAPI() throws IOException {
     HttpURLConnection clientConnection1 =
@@ -169,6 +191,10 @@ public class TestAPIHandlers {
     clientConnection4.disconnect();
   }
 
+  /**
+   * Testing the CSV server search handler
+   * @throws IOException
+   */
   @Test
   public void testSearchHandler() throws IOException {
     HttpURLConnection clientConnection1 =
@@ -260,6 +286,10 @@ public class TestAPIHandlers {
     assertEquals(listResponse, List.of());
   }
 
+  /**
+   * Testing ACS API broadbandhandler
+   * @throws IOException
+   */
   @Test
   public void testBroadbandHandler() throws IOException {
     // Basic census call case
@@ -298,6 +328,10 @@ public class TestAPIHandlers {
     clientConnection3.disconnect();
   }
 
+  /**
+   * Testing ACS API using mock calls
+   * @throws IOException
+   */
   @Test
   public void testMock() throws IOException {
     HttpURLConnection clientConnection1 =
@@ -332,6 +366,12 @@ public class TestAPIHandlers {
     clientConnection1.disconnect();
   }
 
+  /**
+   * Testing the cach functions correclty
+   * @param <V>
+   * @throws IOException
+   * @throws InterruptedException
+   */
   @Test
   public <V> void testCache() throws IOException, InterruptedException {
     // Test values will delete after max time reached
