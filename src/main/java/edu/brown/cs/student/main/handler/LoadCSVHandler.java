@@ -11,14 +11,29 @@ import spark.Request;
 import spark.Response;
 import spark.Route;
 
+/**
+ * This is the LoadCSVHandler that serves as an endpoint for loading a specified
+ * CSV file to the server.
+ */
 public class LoadCSVHandler implements Route {
   private final ParseDatasource state;
   private List<List<String>> parsed;
 
+  /**
+   * This is the constructor for LoadCSVHandler, which takes in a ParseDatasource.
+   * @param state ParseDatasource that keeps track of data across CSVHandlers
+   */
   public LoadCSVHandler(ParseDatasource state) {
     this.state = state;
   }
 
+  /**
+   * This handles the request to this endpoint. It takes a file path and loads the file
+   * to the server.
+   * @param request Request of the user
+   * @param response Response to the user
+   * @return Json Object that represents success or failure loading file
+   */
   @Override
   public Object handle(Request request, Response response) {
     // return message

@@ -9,6 +9,5 @@ import java.util.concurrent.TimeUnit;
 public class Constants {
   public static final Integer EXPIRE_TIME_IN_SECONDS = 5;
   public static final TimeUnit TIME_SECOND = TimeUnit.SECONDS;
-
   public static final Integer MAX_SIZE = 3;
 }
