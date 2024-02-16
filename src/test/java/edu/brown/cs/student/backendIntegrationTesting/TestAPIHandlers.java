@@ -19,6 +19,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import okio.Buffer;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -61,6 +62,18 @@ public class TestAPIHandlers {
     Spark.get("broadbandDatasource", new BroadbandHandler(broadbandDatasource));
 
     Spark.awaitInitialization(); // don't continue until the server is listening
+  }
+
+  @AfterEach
+  public void tearUp() {
+    Spark.unmap("loadCSVHandler");
+    Spark.awaitStop();
+    Spark.unmap("viewCSVHandler");
+    Spark.awaitStop();
+    Spark.unmap("searchCSVHandler");
+    Spark.awaitStop();
+    Spark.unmap("broadbandDatasource");
+    Spark.awaitStop();
   }
 
   private static HttpURLConnection tryRequest(String apiCall) throws IOException {
@@ -171,8 +184,8 @@ public class TestAPIHandlers {
     clientConnection1.disconnect();
 
     // File searched with header and colID
-    HttpURLConnection loadConnect =tryRequest(
-        "loadCSVHandler?path=data/census/dol_ri_earnings_disparity.csv");
+    HttpURLConnection loadConnect =
+        tryRequest("loadCSVHandler?path=data/census/dol_ri_earnings_disparity.csv");
     assertEquals(200, loadConnect.getResponseCode());
     HttpURLConnection clientConnection2 =
         tryRequest(
@@ -182,12 +195,12 @@ public class TestAPIHandlers {
     assertEquals(200, clientConnection2.getResponseCode());
     List<List<String>> listResponse =
         this.listAdapter.fromJson(new Buffer().readFrom(clientConnection2.getInputStream()));
-    assertEquals(listResponse, List.of(
-        List.of("RI", "Black", "$770.26", "30424.80376", "$0.73", "6%")));
+    assertEquals(
+        listResponse, List.of(List.of("RI", "Black", "$770.26", "30424.80376", "$0.73", "6%")));
 
     // File searched with no header
-    HttpURLConnection loadConnect2 =tryRequest(
-        "loadCSVHandler?path=data/census/dol_ri_earnings_disparity.csv");
+    HttpURLConnection loadConnect2 =
+        tryRequest("loadCSVHandler?path=data/census/dol_ri_earnings_disparity.csv");
     assertEquals(200, loadConnect2.getResponseCode());
     HttpURLConnection clientConnection3 =
         tryRequest(
@@ -197,13 +210,20 @@ public class TestAPIHandlers {
     assertEquals(200, clientConnection2.getResponseCode());
     listResponse =
         this.listAdapter.fromJson(new Buffer().readFrom(clientConnection3.getInputStream()));
-    assertEquals(listResponse, List.of(
-        List.of("State", "Data Type", "Average Weekly Earnings", "Number of Workers",
-            "Earnings Disparity", "Employed Percent")));
+    assertEquals(
+        listResponse,
+        List.of(
+            List.of(
+                "State",
+                "Data Type",
+                "Average Weekly Earnings",
+                "Number of Workers",
+                "Earnings Disparity",
+                "Employed Percent")));
 
     // File searched with no header or col
-    HttpURLConnection loadConnect3 =tryRequest(
-        "loadCSVHandler?path=data/census/dol_ri_earnings_disparity.csv");
+    HttpURLConnection loadConnect3 =
+        tryRequest("loadCSVHandler?path=data/census/dol_ri_earnings_disparity.csv");
     assertEquals(200, loadConnect3.getResponseCode());
     HttpURLConnection clientConnection4 =
         tryRequest(
@@ -213,13 +233,20 @@ public class TestAPIHandlers {
     assertEquals(200, clientConnection3.getResponseCode());
     listResponse =
         this.listAdapter.fromJson(new Buffer().readFrom(clientConnection4.getInputStream()));
-    assertEquals(listResponse, List.of(
-        List.of("State", "Data Type", "Average Weekly Earnings", "Number of Workers",
-            "Earnings Disparity", "Employed Percent")));
+    assertEquals(
+        listResponse,
+        List.of(
+            List.of(
+                "State",
+                "Data Type",
+                "Average Weekly Earnings",
+                "Number of Workers",
+                "Earnings Disparity",
+                "Employed Percent")));
 
     // File searched with target not existing
-    HttpURLConnection loadConnect4 =tryRequest(
-        "loadCSVHandler?path=data/census/dol_ri_earnings_disparity.csv");
+    HttpURLConnection loadConnect4 =
+        tryRequest("loadCSVHandler?path=data/census/dol_ri_earnings_disparity.csv");
     assertEquals(200, loadConnect4.getResponseCode());
     HttpURLConnection clientConnection5 =
         tryRequest(
@@ -231,5 +258,4 @@ public class TestAPIHandlers {
         this.listAdapter.fromJson(new Buffer().readFrom(clientConnection5.getInputStream()));
     assertEquals(listResponse, List.of());
   }
-
 }
