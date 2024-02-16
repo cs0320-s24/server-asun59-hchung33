@@ -9,22 +9,18 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-/**
- * This is the ParseDatasource that maintains all data for all CSVHandlers.
- */
+/** This is the ParseDatasource that maintains all data for all CSVHandlers. */
 public class ParseDatasource {
   List<List<String>> parsed;
   private Map<String, List<List<String>>> responseMap;
   public CreatorFromRow<List<String>> stringCreator;
 
-  /**
-   * This is the constructor for the ParseDatasource class.
-   */
+  /** This is the constructor for the ParseDatasource class. */
   public ParseDatasource() {}
 
   /**
-   * This method parses a provided file from its path by creating an instance of
-   * CSVParser.
+   * This method parses a provided file from its path by creating an instance of CSVParser.
+   *
    * @param path File path provided by the user to parse
    * @throws FactoryFailureException If there are issues while parsing the file path
    * @throws IOException If there are any issues with the format of the path
@@ -38,6 +34,7 @@ public class ParseDatasource {
 
   /**
    * This returns the CreatorFromRow instance
+   *
    * @return CreatorFromRow instance
    */
   public CreatorFromRow<List<String>> getCreator() {
@@ -46,6 +43,7 @@ public class ParseDatasource {
 
   /**
    * This returns the List of List of String parsed from the CSV file
+   *
    * @return Parsed List of List of String from the CSV file
    */
   public List<List<String>> getParsed() {
@@ -53,8 +51,9 @@ public class ParseDatasource {
   }
 
   /**
-   * This stores the responseMap in LoadCSVHandler to access later in SearchCSVHandler
-   * and ViewCSVHandler.
+   * This stores the responseMap in LoadCSVHandler to access later in SearchCSVHandler and
+   * ViewCSVHandler.
+   *
    * @param responseMap HashMap storing the Parsed CSV Data
    */
   public void setMap(Map<String, List<List<String>>> responseMap) {
@@ -63,6 +62,7 @@ public class ParseDatasource {
 
   /**
    * This returns the responseMap stored from LoadCSVHandler.
+   *
    * @return
    */
   public Map<String, List<List<String>>> getMap() {

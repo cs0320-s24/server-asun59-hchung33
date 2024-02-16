@@ -10,17 +10,14 @@ import edu.brown.cs.student.main.handler.SearchCSVHandler;
 import edu.brown.cs.student.main.handler.ViewCSVHandler;
 import spark.Spark;
 
-/**
- * This is the main class for Server.
- */
+/** This is the main class for Server. */
 public class Server {
   static final int port = 5300;
 
   /**
-   * This is the constructor for the server. This runs the port, and sets up each Handler to
-   * receive user input at each endpoint. Following endpoints are set here: LoadCSVHandler,
-   * ViewCSVHandler, SearchCSVHandler, and BroadbandHandler. Afterward, Spark waits for
-   * the server.
+   * This is the constructor for the server. This runs the port, and sets up each Handler to receive
+   * user input at each endpoint. Following endpoints are set here: LoadCSVHandler, ViewCSVHandler,
+   * SearchCSVHandler, and BroadbandHandler. Afterward, Spark waits for the server.
    */
   public Server() {
     Spark.port(port);
@@ -49,8 +46,9 @@ public class Server {
   }
 
   /**
-   * This is main method for the program. It constructs the Server and prints an informative
-   * message indicating that server has started at port number above.
+   * This is main method for the program. It constructs the Server and prints an informative message
+   * indicating that server has started at port number above.
+   *
    * @param args Arguments for the Server
    */
   public static void main(String[] args) {

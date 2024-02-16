@@ -25,23 +25,20 @@ import spark.Spark;
 
 public class TestAPIHandlers {
 
-  /**
-   * Set up all variables and servers before running integration test
-   */
+  /** Set up all variables and servers before running integration test */
   @BeforeAll
   public static void setup_before_everything() {
     Spark.port(0);
     Logger.getLogger("").setLevel(Level.WARNING); // empty name = root logger
   }
+
   BroadbandDatasource ACSData = new BroadbandDatasource();
   ParseDatasource CSVData = new ParseDatasource();
   JsonAdapter<Map<String, String>> mapAdapter;
   JsonAdapter<List<List<String>>> listAdapter;
 
   BroadbandHandler broadbandHandler;
-  /**
-   * Starting servers before testing
-   */
+  /** Starting servers before testing */
   @BeforeEach
   public void setup() {
     Moshi moshi = new Moshi.Builder().build();
@@ -70,9 +67,7 @@ public class TestAPIHandlers {
     Spark.awaitInitialization(); // don't continue until the server is listening
   }
 
-  /**
-   * Clean up after calls
-   */
+  /** Clean up after calls */
   @AfterEach
   public void tearUp() {
     Spark.unmap("loadCSVHandler");
@@ -87,6 +82,7 @@ public class TestAPIHandlers {
 
   /**
    * Helper method to make HTTP calls
+   *
    * @param apiCall
    * @return the client connection status
    * @throws IOException
@@ -103,6 +99,7 @@ public class TestAPIHandlers {
 
   /**
    * Testing CSV server load handler
+   *
    * @throws IOException
    */
   @Test
@@ -144,6 +141,7 @@ public class TestAPIHandlers {
 
   /**
    * Testing the CSV Server view handler
+   *
    * @throws IOException
    */
   @Test
@@ -191,103 +189,103 @@ public class TestAPIHandlers {
     clientConnection4.disconnect();
   }
 
-  /**
-   * Testing the CSV server search handler
-   * @throws IOException
-   */
-  @Test
-  public void testSearchHandler() throws IOException {
-    HttpURLConnection clientConnection1 =
-        tryRequest(
-            "searchCSVHandler?"
-                + "path=data/census/dol_ri_earnings_disparity.csv"
-                + "&toSearch=Black&headerPresent=true&columnIDString=1");
-    // API connection works
-    assertEquals(200, clientConnection1.getResponseCode());
-    // Test error because no file loaded
-    Map<String, String> response =
-        this.mapAdapter.fromJson(new Buffer().readFrom(clientConnection1.getInputStream()));
-    assertEquals("File can not be searched", response.get("error"));
-    clientConnection1.disconnect();
+    /**
+     * Testing the CSV server search handler
+     *
+     * @throws IOException
+     */
+    @Test
+    public void testSearchHandler() throws IOException {
+      HttpURLConnection clientConnection1 =
+          tryRequest(
+              "searchCSVHandler?"
+                  + "path=data/census/dol_ri_earnings_disparity.csv"
+                  + "&toSearch=Black&headerPresent=true&columnIDString=1");
+      // API connection works
+      assertEquals(200, clientConnection1.getResponseCode());
+      // Test error because no file loaded
+      Map<String, String> response =
+          this.mapAdapter.fromJson(new Buffer().readFrom(clientConnection1.getInputStream()));
+      assertEquals("File can not be searched", response.get("error"));
+      clientConnection1.disconnect();
 
-    // File searched with header and colID
-    HttpURLConnection loadConnect =
-        tryRequest("loadCSVHandler?path=data/census/dol_ri_earnings_disparity.csv");
-    assertEquals(200, loadConnect.getResponseCode());
-    HttpURLConnection clientConnection2 =
-        tryRequest(
-            "searchCSVHandler?"
-                + "path=data/census/dol_ri_earnings_disparity.csv"
-                + "&toSearch=Black&headerPresent=true&columnIDString=1");
-    assertEquals(200, clientConnection2.getResponseCode());
-    List<List<String>> listResponse =
-        this.listAdapter.fromJson(new Buffer().readFrom(clientConnection2.getInputStream()));
-    assertEquals(
-        listResponse, List.of(List.of("RI", "Black", "$770.26", "30424.80376", "$0.73", "6%")));
+      // File searched with header and colID
+      HttpURLConnection loadConnect =
+          tryRequest("loadCSVHandler?path=data/census/dol_ri_earnings_disparity.csv");
+      assertEquals(200, loadConnect.getResponseCode());
+      HttpURLConnection clientConnection2 =
+          tryRequest(
+              "searchCSVHandler?"
+                  + "path=data/census/dol_ri_earnings_disparity.csv"
+                  + "&toSearch=Black&headerPresent=true&columnIDString=1");
+      assertEquals(200, clientConnection2.getResponseCode());
+      List<List<String>> listResponse =
+          this.listAdapter.fromJson(new Buffer().readFrom(clientConnection2.getInputStream()));
+      assertEquals(
+          listResponse.get(1), List.of("RI", "Black", "$770.26", "30424.80376", "$0.73", "6%"));
 
-    // File searched with no header
-    HttpURLConnection loadConnect2 =
-        tryRequest("loadCSVHandler?path=data/census/dol_ri_earnings_disparity.csv");
-    assertEquals(200, loadConnect2.getResponseCode());
-    HttpURLConnection clientConnection3 =
-        tryRequest(
-            "searchCSVHandler?"
-                + "path=data/census/dol_ri_earnings_disparity.csv"
-                + "&toSearch=Data%20Type&headerPresent=false&columnIDString=1");
-    assertEquals(200, clientConnection2.getResponseCode());
-    listResponse =
-        this.listAdapter.fromJson(new Buffer().readFrom(clientConnection3.getInputStream()));
-    assertEquals(
-        listResponse,
-        List.of(
-            List.of(
-                "State",
-                "Data Type",
-                "Average Weekly Earnings",
-                "Number of Workers",
-                "Earnings Disparity",
-                "Employed Percent")));
+      // File searched with no header
+      HttpURLConnection loadConnect2 =
+          tryRequest("loadCSVHandler?path=data/census/dol_ri_earnings_disparity.csv");
+      assertEquals(200, loadConnect2.getResponseCode());
+      HttpURLConnection clientConnection3 =
+          tryRequest(
+              "searchCSVHandler?"
+                  + "path=data/census/dol_ri_earnings_disparity.csv"
+                  + "&toSearch=Data%20Type&headerPresent=false&columnIDString=1");
+      assertEquals(200, clientConnection2.getResponseCode());
+      listResponse =
+          this.listAdapter.fromJson(new Buffer().readFrom(clientConnection3.getInputStream()));
+      assertEquals(
+          listResponse.get(1),
+              List.of(
+                  "State",
+                  "Data Type",
+                  "Average Weekly Earnings",
+                  "Number of Workers",
+                  "Earnings Disparity",
+                  "Employed Percent"));
 
-    // File searched with no header or col
-    HttpURLConnection loadConnect3 =
-        tryRequest("loadCSVHandler?path=data/census/dol_ri_earnings_disparity.csv");
-    assertEquals(200, loadConnect3.getResponseCode());
-    HttpURLConnection clientConnection4 =
-        tryRequest(
-            "searchCSVHandler?"
-                + "path=data/census/dol_ri_earnings_disparity.csv"
-                + "&toSearch=Data%20Type&headerPresent=false&columnIDString=hello");
-    assertEquals(200, clientConnection3.getResponseCode());
-    listResponse =
-        this.listAdapter.fromJson(new Buffer().readFrom(clientConnection4.getInputStream()));
-    assertEquals(
-        listResponse,
-        List.of(
-            List.of(
-                "State",
-                "Data Type",
-                "Average Weekly Earnings",
-                "Number of Workers",
-                "Earnings Disparity",
-                "Employed Percent")));
+      // File searched with no header or col
+      HttpURLConnection loadConnect3 =
+          tryRequest("loadCSVHandler?path=data/census/dol_ri_earnings_disparity.csv");
+      assertEquals(200, loadConnect3.getResponseCode());
+      HttpURLConnection clientConnection4 =
+          tryRequest(
+              "searchCSVHandler?"
+                  + "path=data/census/dol_ri_earnings_disparity.csv"
+                  + "&toSearch=Data%20Type&headerPresent=false&columnIDString=hello");
+      assertEquals(200, clientConnection3.getResponseCode());
+      listResponse =
+          this.listAdapter.fromJson(new Buffer().readFrom(clientConnection4.getInputStream()));
+      assertEquals(
+          listResponse.get(1),
+              List.of(
+                  "State",
+                  "Data Type",
+                  "Average Weekly Earnings",
+                  "Number of Workers",
+                  "Earnings Disparity",
+                  "Employed Percent"));
 
-    // File searched with target not existing
-    HttpURLConnection loadConnect4 =
-        tryRequest("loadCSVHandler?path=data/census/dol_ri_earnings_disparity.csv");
-    assertEquals(200, loadConnect4.getResponseCode());
-    HttpURLConnection clientConnection5 =
-        tryRequest(
-            "searchCSVHandler?"
-                + "path=data/census/dol_ri_earnings_disparity.csv"
-                + "&toSearch=NOTREAL&headerPresent=false&columnIDString=hello");
-    assertEquals(200, clientConnection5.getResponseCode());
-    listResponse =
-        this.listAdapter.fromJson(new Buffer().readFrom(clientConnection5.getInputStream()));
-    assertEquals(listResponse, List.of());
-  }
+      // File searched with target not existing
+      HttpURLConnection loadConnect4 =
+          tryRequest("loadCSVHandler?path=data/census/dol_ri_earnings_disparity.csv");
+      assertEquals(200, loadConnect4.getResponseCode());
+      HttpURLConnection clientConnection5 =
+          tryRequest(
+              "searchCSVHandler?"
+                  + "path=data/census/dol_ri_earnings_disparity.csv"
+                  + "&toSearch=NOTREAL&headerPresent=false&columnIDString=hello");
+      assertEquals(200, clientConnection5.getResponseCode());
+      listResponse =
+          this.listAdapter.fromJson(new Buffer().readFrom(clientConnection5.getInputStream()));
+      assertEquals(1, listResponse.size());
+    }
 
   /**
    * Testing ACS API broadbandhandler
+   *
    * @throws IOException
    */
   @Test
@@ -297,7 +295,7 @@ public class TestAPIHandlers {
         tryRequest("broadbandDatasource?" + "state=Arkansas&county=Sebastian%20County");
     assertEquals(200, clientConnection1.getResponseCode());
     List<List<String>> response =
-            this.listAdapter.fromJson(new Buffer().readFrom(clientConnection1.getInputStream()));
+        this.listAdapter.fromJson(new Buffer().readFrom(clientConnection1.getInputStream()));
     assertEquals("state: Arkansas", response.get(0).get(2));
     assertEquals("county: Sebastian County", response.get(0).get(3));
     assertEquals("Percentage: 80.0", response.get(0).get(4));
@@ -330,6 +328,7 @@ public class TestAPIHandlers {
 
   /**
    * Testing ACS API using mock calls
+   *
    * @throws IOException
    */
   @Test
@@ -339,9 +338,6 @@ public class TestAPIHandlers {
     assertEquals(200, clientConnection1.getResponseCode());
     List<List<String>> response =
         this.listAdapter.fromJson(new Buffer().readFrom(clientConnection1.getInputStream()));
-
-    System.out.println(response);
-
     // Mock data initialization
     BroadbandInterface mock = new MockBroadbandDatasource("80.0");
     String mockData = mock.getInternetData("05", "131").data();
@@ -368,6 +364,7 @@ public class TestAPIHandlers {
 
   /**
    * Testing the cach functions correclty
+   *
    * @param <V>
    * @throws IOException
    * @throws InterruptedException
@@ -387,18 +384,15 @@ public class TestAPIHandlers {
         tryRequest("broadbandDatasource?" + "state=Arkansas&county=Sebastian%20County");
     assertEquals(200, clientConnection1.getResponseCode());
 
-    assertEquals("80.0",
-            this.broadbandHandler.getCache().asMap().get("05131").data());
+    assertEquals("80.0", this.broadbandHandler.getCache().asMap().get("05131").data());
 
     clientConnection1.disconnect();
 
     HttpURLConnection clientConnection2 =
         tryRequest("broadbandDatasource?" + "state=California&county=Kings%20County");
     assertEquals(200, clientConnection2.getResponseCode());
-    assertEquals("80.0",
-        this.broadbandHandler.getCache().asMap().get("05131").data());
-    assertEquals("83.5",
-        this.broadbandHandler.getCache().asMap().get("06031").data());
+    assertEquals("80.0", this.broadbandHandler.getCache().asMap().get("05131").data());
+    assertEquals("83.5", this.broadbandHandler.getCache().asMap().get("06031").data());
 
     clientConnection2.disconnect();
 

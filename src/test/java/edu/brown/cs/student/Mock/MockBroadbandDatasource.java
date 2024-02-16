@@ -11,21 +11,21 @@ import java.util.concurrent.ExecutionException;
  * This class implements the interface. It allows us to get mock data and prevents us from needing
  * to call the api many times for testing
  */
-
 public class MockBroadbandDatasource implements BroadbandInterface {
   private String data;
 
   /**
    * Mock class constructor
+   *
    * @param data
    */
-
   public MockBroadbandDatasource(String data) {
     this.data = data;
   }
 
   /**
    * Override method that returns the data for mock data
+   *
    * @param cache CacheBroadbandDatasource that stores recent queries or performs expensive
    *     computation
    * @param stateID ID of the state being queried
@@ -41,6 +41,7 @@ public class MockBroadbandDatasource implements BroadbandInterface {
 
   /**
    * Override method for interface
+   *
    * @return
    */
   @Override
@@ -50,6 +51,7 @@ public class MockBroadbandDatasource implements BroadbandInterface {
 
   /**
    * Override method for interface
+   *
    * @return
    */
   @Override
@@ -58,11 +60,11 @@ public class MockBroadbandDatasource implements BroadbandInterface {
   }
   /**
    * Override method for interface
+   *
    * @return
    */
   @Override
   public BroadbandData getInternetData(String stateID, String countyID) {
     return new BroadbandData(this.data);
   }
-
 }

@@ -164,6 +164,7 @@ public class BroadbandDatasource implements BroadbandInterface {
   /**
    * This helper method is public for testing purposes. It connects a URL and returns a
    * clientConnection of tpe HttpURLConnection.
+   *
    * @param requestURL The URL we are to send the reqeust to
    * @return HttpURLConnection from the URL
    * @throws DatasourceException If the URLConnection is not an HttpURLConnection

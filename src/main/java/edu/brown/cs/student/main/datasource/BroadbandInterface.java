@@ -3,13 +3,12 @@ package edu.brown.cs.student.main.datasource;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-/**
- * This is the interface implemented by BroadbandDatasource and MockBroadbandDatasource.
- */
+/** This is the interface implemented by BroadbandDatasource and MockBroadbandDatasource. */
 public interface BroadbandInterface {
 
   /**
    * This is a method that handles caching.
+   *
    * @param cache CacheBroadbandDatasource that stores recent queries or performs expensive
    *     computation
    * @param stateID ID of the state being queried

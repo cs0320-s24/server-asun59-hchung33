@@ -6,6 +6,7 @@ import com.squareup.moshi.Types;
 import edu.brown.cs.student.main.datasource.ParseDatasource;
 import edu.brown.cs.student.main.parser.CSVSearcher;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,14 +15,15 @@ import spark.Response;
 import spark.Route;
 
 /**
- * This is the SearchCSVHandler that serves as an endpoint for searching through
- * a specific CSV file specified by the user.
+ * This is the SearchCSVHandler that serves as an endpoint for searching through a specific CSV file
+ * specified by the user.
  */
 public class SearchCSVHandler implements Route {
   private final ParseDatasource state;
 
   /**
    * This is the constructor for SearchCSVHandler, which takes in a ParseDatasource.
+   *
    * @param state ParseDatasource that keeps track of data across CSVHandlers
    */
   public SearchCSVHandler(ParseDatasource state) {
@@ -29,9 +31,10 @@ public class SearchCSVHandler implements Route {
   }
 
   /**
-   * This handles the request to this endpoint. It takes in required inputs to the
-   * CSVSearcher such as path, toSearch, headerPresent, and columnIDString, and performs
-   * search by calling searchCSV. Then, it returns the found rows as a Json Object.
+   * This handles the request to this endpoint. It takes in required inputs to the CSVSearcher such
+   * as path, toSearch, headerPresent, and columnIDString, and performs search by calling searchCSV.
+   * Then, it returns the found rows as a Json Object.
+   *
    * @param request Request of the user
    * @param response Response to the user
    * @return Json Object of the found rows
@@ -67,6 +70,14 @@ public class SearchCSVHandler implements Route {
         boolean headerPresentBool = Boolean.parseBoolean(headerPresent);
         List<List<String>> foundRows =
             searcher.searchCSV(toSearch, headerPresentBool, columnIDString, parsedData);
+
+        List<String> echo =
+            new ArrayList<String>(
+                List.of(
+                    "path: " + path, "toSearch: " + toSearch, "headerPresent: " + headerPresent));
+
+        foundRows.add(0, echo);
+
         // Serialize the output
         Type listListStringType =
             Types.newParameterizedType(

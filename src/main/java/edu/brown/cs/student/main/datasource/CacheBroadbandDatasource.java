@@ -18,8 +18,9 @@ public class CacheBroadbandDatasource {
   LoadingCache<String, BroadbandData> cache;
 
   /**
-   * This is the Proxy class that serves as an intermediary between the Server and the
-   * Handler. Here, we get both HashMaps containing state to ID and county to ID.
+   * This is the Proxy class that serves as an intermediary between the Server and the Handler.
+   * Here, we get both HashMaps containing state to ID and county to ID.
+   *
    * @param original This is BroadbandDatasource implementing BroadbandInterface
    */
   public CacheBroadbandDatasource(BroadbandInterface original) {
@@ -31,11 +32,10 @@ public class CacheBroadbandDatasource {
   }
 
   /**
-   * This method sets up the LoadingCache from Google's Guava library.
-   * The maximum size is 100 entries, and the expiration policy is determined
-   * by external developers through a Constants class. It initially accesses
-   * String key from the LoadingCache, and if it cannot find the corresponding
-   * BroadbandData, then it makes an API query by calling getInternetData.
+   * This method sets up the LoadingCache from Google's Guava library. The maximum size is 100
+   * entries, and the expiration policy is determined by external developers through a Constants
+   * class. It initially accesses String key from the LoadingCache, and if it cannot find the
+   * corresponding BroadbandData, then it makes an API query by calling getInternetData.
    */
   public void makeCache() {
     LoadingCache<String, BroadbandData> cache =
@@ -53,6 +53,7 @@ public class CacheBroadbandDatasource {
 
   /**
    * This method returns the LoadingCache.
+   *
    * @return LoadingCache
    */
   public LoadingCache<String, BroadbandData> getCache() {
@@ -61,6 +62,7 @@ public class CacheBroadbandDatasource {
 
   /**
    * This method returns the ID of the inputted state.
+   *
    * @param name Name of the state the user wish to get the ID of
    * @return The ID of the state
    */
@@ -70,6 +72,7 @@ public class CacheBroadbandDatasource {
 
   /**
    * This method returns the ID of the inputted County.
+   *
    * @param stateCounty Name of the county and state of the county we want to get the ID of
    * @return The ID of the county
    */
@@ -78,10 +81,11 @@ public class CacheBroadbandDatasource {
   }
 
   /**
-   * This method converts the List of List of Strings containing states and their corresponding
-   * IDs into a HashMap of state to ID.
-   * @param states List of List of Strings containing states and their corresponding IDs
-   *               from API query
+   * This method converts the List of List of Strings containing states and their corresponding IDs
+   * into a HashMap of state to ID.
+   *
+   * @param states List of List of Strings containing states and their corresponding IDs from API
+   *     query
    */
   private void stateToMap(List<List<String>> states) {
     for (List<String> s : states) {
@@ -92,8 +96,9 @@ public class CacheBroadbandDatasource {
   /**
    * This method converts the List of List of Strings containing counties and their corresponding
    * IDs into a HashMap county to ID.
-   * @param county List of List of Strings containing counties and their corresponding IDs
-   *               from API query
+   *
+   * @param county List of List of Strings containing counties and their corresponding IDs from API
+   *     query
    */
   private void countyToMap(List<List<String>> county) {
     for (int i = 1; i < county.size(); i++) {

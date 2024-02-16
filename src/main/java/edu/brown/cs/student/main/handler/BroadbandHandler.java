@@ -21,8 +21,8 @@ import spark.Response;
 import spark.Route;
 
 /**
- * This is the BroadbandHandler that serves as an endpoint for getting
- * information on households with broadband access.
+ * This is the BroadbandHandler that serves as an endpoint for getting information on households
+ * with broadband access.
  */
 public class BroadbandHandler implements Route {
   private final BroadbandDatasource state;
@@ -31,6 +31,7 @@ public class BroadbandHandler implements Route {
   /**
    * This is the constructor for the BroadbandHandler class. This takes in a BroadbandDatasource,
    * creates a CacheBroadbandDatasource, and sets up the cache.
+   *
    * @param state BroadbandDatasource that tracks data
    */
   public BroadbandHandler(BroadbandDatasource state) {
@@ -40,9 +41,9 @@ public class BroadbandHandler implements Route {
   }
 
   /**
-   * This handles the request to this endpoint. It takes search queries for a state and
-   * a county, and ultimately returns a Json response that provides the user's desired
-   * data.
+   * This handles the request to this endpoint. It takes search queries for a state and a county,
+   * and ultimately returns a Json response that provides the user's desired data.
+   *
    * @param request Request of the user
    * @param response Response to the user
    * @return Json Object
@@ -104,6 +105,7 @@ public class BroadbandHandler implements Route {
 
   /**
    * This is a getter for LoadingCache.
+   *
    * @return LoadingCache
    */
   public LoadingCache<String, BroadbandData> getCache() {

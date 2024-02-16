@@ -58,9 +58,7 @@ public class unitTests {
         });
   }
 
-  /**
-   * Testing cacheBoradband data source
-   */
+  /** Testing cacheBoradband data source */
   @Test
   public void testCacheBroadbandDatasource() {
     // Test getStateID gets the correct state ID from state ID map created
@@ -76,6 +74,7 @@ public class unitTests {
 
   /**
    * Testing parse datasource
+   *
    * @throws IOException
    * @throws FactoryFailureException
    */
@@ -89,8 +88,7 @@ public class unitTests {
           this.parseDatasource.parse("invalid!");
         });
     // Valid Parsing
-    this.parseDatasource.parse(
-        "data/house/house.csv");
+    this.parseDatasource.parse("data/house/house.csv");
 
     assertEquals(
         List.of(
