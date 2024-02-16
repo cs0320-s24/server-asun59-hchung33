@@ -363,7 +363,7 @@ public class TestAPIHandlers {
   }
 
   /**
-   * Testing the cach functions correclty
+   * Testing each functions correctly
    *
    * @param <V>
    * @throws IOException
