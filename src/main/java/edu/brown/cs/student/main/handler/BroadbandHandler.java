@@ -86,7 +86,7 @@ public class BroadbandHandler implements Route {
     }
   }
 
-  public LoadingCache<String, BroadbandData> getCache(){
+  public LoadingCache<String, BroadbandData> getCache() {
     return this.proxy.getCache();
   }
 }

@@ -41,12 +41,12 @@ public class TestAPIHandlers {
   public void setup() {
     Moshi moshi = new Moshi.Builder().build();
     this.mapAdapter =
-            moshi.adapter(Types.newParameterizedType(Map.class, String.class, String.class));
+        moshi.adapter(Types.newParameterizedType(Map.class, String.class, String.class));
     Moshi moshi2 = new Moshi.Builder().build();
     this.listAdapter =
-            moshi2.adapter(
-                    Types.newParameterizedType(
-                            List.class, Types.newParameterizedType(List.class, String.class)));
+        moshi2.adapter(
+            Types.newParameterizedType(
+                List.class, Types.newParameterizedType(List.class, String.class)));
     // Re-initialize state, etc. for _every_ test method run
     this.ACSData = new BroadbandDatasource();
     this.CSVData = new ParseDatasource();
@@ -264,16 +264,16 @@ public class TestAPIHandlers {
   public void testBroadbandHandler() throws IOException {
     // Basic census call case
     HttpURLConnection clientConnection1 =
-            tryRequest("broadbandDatasource?" + "state=Arkansas&county=Sebastian%20County");
+        tryRequest("broadbandDatasource?" + "state=Arkansas&county=Sebastian%20County");
     assertEquals(200, clientConnection1.getResponseCode());
     List<List<String>> response =
-            this.listAdapter.fromJson(new Buffer().readFrom(clientConnection1.getInputStream()));
+        this.listAdapter.fromJson(new Buffer().readFrom(clientConnection1.getInputStream()));
     assertEquals(List.of("Sebastian County, Arkansas", "80.0", "05", "131"), response.get(1));
     clientConnection1.disconnect();
 
     // County overlaps with another states
     HttpURLConnection clientConnection2 =
-            tryRequest("broadbandDatasource?" + "state=California&county=Kings%20County");
+        tryRequest("broadbandDatasource?" + "state=California&county=Kings%20County");
     assertEquals(200, clientConnection2.getResponseCode());
     response = this.listAdapter.fromJson(new Buffer().readFrom(clientConnection2.getInputStream()));
     assertEquals(List.of("Kings County, California", "83.5", "06", "031"), response.get(1));
@@ -281,15 +281,15 @@ public class TestAPIHandlers {
 
     // Invalid state
     HttpURLConnection clientConnection3 =
-            tryRequest("broadbandDatasource?" + "state=YEEHAW&county=Kings%20County");
+        tryRequest("broadbandDatasource?" + "state=YEEHAW&county=Kings%20County");
     assertEquals(200, clientConnection3.getResponseCode());
     Map<String, String> responseMap =
-            this.mapAdapter.fromJson(new Buffer().readFrom(clientConnection3.getInputStream()));
+        this.mapAdapter.fromJson(new Buffer().readFrom(clientConnection3.getInputStream()));
     assertEquals(
-            "java.lang.RuntimeException: "
-                    + "edu.brown.cs.student.main.datasource.DatasourceException: "
-                    + "unexpected: API connection not success status null",
-            responseMap.get("error"));
+        "java.lang.RuntimeException: "
+            + "edu.brown.cs.student.main.datasource.DatasourceException: "
+            + "unexpected: API connection not success status null",
+        responseMap.get("error"));
     clientConnection3.disconnect();
   }
 
@@ -332,7 +332,7 @@ public class TestAPIHandlers {
   public <V> void testCache() throws IOException, InterruptedException {
     // Test values will delete after max time reached
     HttpURLConnection clientConnectionSleep =
-            tryRequest("broadbandDatasource?" + "state=New%20York&county=Kings%20County");
+        tryRequest("broadbandDatasource?" + "state=New%20York&county=Kings%20County");
     assertEquals(200, clientConnectionSleep.getResponseCode());
     clientConnectionSleep.disconnect();
     Thread.sleep(12000);
@@ -340,35 +340,34 @@ public class TestAPIHandlers {
 
     // Basic census call case checking cache
     HttpURLConnection clientConnection1 =
-            tryRequest("broadbandDatasource?" + "state=Arkansas&county=Sebastian%20County");
+        tryRequest("broadbandDatasource?" + "state=Arkansas&county=Sebastian%20County");
     assertEquals(200, clientConnection1.getResponseCode());
 
     assertEquals(
-            List.of(List.of("Sebastian County, Arkansas", "80.0", "05", "131")),
-            new ArrayList<>(this.broadbandHandler.getCache().asMap().values()));
+        List.of(List.of("Sebastian County, Arkansas", "80.0", "05", "131")),
+        new ArrayList<>(this.broadbandHandler.getCache().asMap().values()));
     clientConnection1.disconnect();
 
     HttpURLConnection clientConnection2 =
-            tryRequest("broadbandDatasource?" + "state=California&county=Kings%20County");
+        tryRequest("broadbandDatasource?" + "state=California&county=Kings%20County");
     assertEquals(200, clientConnection2.getResponseCode());
     assertEquals(
-            List.of(
-                    List.of("Sebastian County, Arkansas", "80.0", "05", "131"),
-                    List.of("Kings County, California", "83.5", "06", "031")),
-            new ArrayList<>(this.broadbandHandler.getCache().asMap().values()));
+        List.of(
+            List.of("Sebastian County, Arkansas", "80.0", "05", "131"),
+            List.of("Kings County, California", "83.5", "06", "031")),
+        new ArrayList<>(this.broadbandHandler.getCache().asMap().values()));
     clientConnection2.disconnect();
 
     // Test values will delete once size reaches max (in this case 3)
     HttpURLConnection clientConnection4 =
-            tryRequest("broadbandDatasource?" + "state=Arkansas&county=Stone%20County");
+        tryRequest("broadbandDatasource?" + "state=Arkansas&county=Stone%20County");
     assertEquals(200, clientConnection4.getResponseCode());
     clientConnection4.disconnect();
     // most recent value deleted
     HttpURLConnection clientConnection3 =
-            tryRequest("broadbandDatasource?" + "state=New%20York&county=Kings%20County");
+        tryRequest("broadbandDatasource?" + "state=New%20York&county=Kings%20County");
     assertEquals(200, clientConnection3.getResponseCode());
     clientConnection3.disconnect();
     assertEquals(3, this.broadbandHandler.getCache().asMap().values().size());
   }
-
 }

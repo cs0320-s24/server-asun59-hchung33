@@ -82,7 +82,7 @@ public class BroadbandDatasource implements BroadbandInterface {
    * respective codes. This information is stored so that when the user queries for a specific
    * county, we can retrieve the county code to make the query for broadband percentage data.
    *
-   * @return
+   * @return List of List of Strings containing CountyIDs
    */
   @Override
   public List<List<String>> getCountyIDs() {
@@ -162,8 +162,12 @@ public class BroadbandDatasource implements BroadbandInterface {
   }
 
   /**
-   * Private helper method; throws IOException so different callers can handle differently if
-   * needed. NOTE: Made public for testing!!!!
+   * This helper method is public for testing purposes. It connects a URL and returns a
+   * clientConnection of tpe HttpURLConnection.
+   * @param requestURL The URL we are to send the reqeust to
+   * @return HttpURLConnection from the URL
+   * @throws DatasourceException If the URLConnection is not an HttpURLConnection
+   * @throws IOException If the URL is malformed
    */
   public HttpURLConnection connect(URL requestURL) throws DatasourceException, IOException {
     URLConnection urlConnection = requestURL.openConnection();
