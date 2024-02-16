@@ -16,4 +16,7 @@ public class MockBroadbandDatasource implements BroadbandData {
       CacheBroadbandDatasource cache, String stateID, String countyID) throws ExecutionException {
     return this.data;
   }
+  public void setNUll(){
+    this.data= null;
+  }
 }

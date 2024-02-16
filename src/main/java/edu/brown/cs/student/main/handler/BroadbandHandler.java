@@ -5,6 +5,7 @@ import com.squareup.moshi.Moshi;
 import com.squareup.moshi.Types;
 import edu.brown.cs.student.main.datasource.BroadbandDatasource;
 import edu.brown.cs.student.main.datasource.CacheBroadbandDatasource;
+import edu.brown.cs.student.main.datasource.DatasourceException;
 import java.lang.reflect.Type;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -56,6 +57,9 @@ public class BroadbandHandler implements Route {
       String stateID = this.proxy.getStateID(state);
       String countyID = this.proxy.getCountyID(county + " " + state);
       List<String> wifiData = this.state.broadbandDataProxy(this.proxy, stateID, countyID);
+      if(wifiData.isEmpty()|| wifiData==null){
+        throw new DatasourceException("could nto retrieve data");
+      }
       // Get the current date and time
       LocalDateTime currentDateTime = LocalDateTime.now();
       // Formatting time and date

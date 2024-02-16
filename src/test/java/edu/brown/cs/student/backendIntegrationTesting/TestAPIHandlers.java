@@ -63,9 +63,8 @@ public class TestAPIHandlers {
 
     Spark.awaitInitialization(); // don't continue until the server is listening
   }
-
   @AfterEach
-  public void tearUp() {
+  public void tearUp(){
     Spark.unmap("loadCSVHandler");
     Spark.awaitStop();
     Spark.unmap("viewCSVHandler");
@@ -257,5 +256,45 @@ public class TestAPIHandlers {
     listResponse =
         this.listAdapter.fromJson(new Buffer().readFrom(clientConnection5.getInputStream()));
     assertEquals(listResponse, List.of());
+  }
+  @Test
+  public void testBroadbandHandler() throws IOException {
+    // Basic census call case
+    HttpURLConnection clientConnection1 =
+        tryRequest("broadbandDatasource?" + "state=Arkansas&county=Sebastian%20County");
+    assertEquals(200, clientConnection1.getResponseCode());
+    List<List<String>> response =
+        this.listAdapter.fromJson(new Buffer().readFrom(clientConnection1.getInputStream()));
+    assertEquals(List.of("Sebastian County, Arkansas", "80.0", "05", "131"), response.get(1));
+    clientConnection1.disconnect();
+
+    // County overlaps with another states
+    HttpURLConnection clientConnection2 =
+        tryRequest("broadbandDatasource?" + "state=California&county=Kings%20County");
+    assertEquals(200, clientConnection2.getResponseCode());
+    response = this.listAdapter.fromJson(new Buffer().readFrom(clientConnection2.getInputStream()));
+    assertEquals(List.of("Kings County, California", "83.5", "06", "031"), response.get(1));
+    clientConnection2.disconnect();
+
+    // Invalid state
+    HttpURLConnection clientConnection3 =
+        tryRequest("broadbandDatasource?" + "state=YEEHAW&county=Kings%20County");
+    assertEquals(200, clientConnection3.getResponseCode());
+    Map<String, String> responseMap =
+        this.mapAdapter.fromJson(new Buffer().readFrom(clientConnection3.getInputStream()));
+    assertEquals(
+        "java.lang.RuntimeException: "
+            + "edu.brown.cs.student.main.datasource.DatasourceException: "
+            + "unexpected: API connection not success status null",
+        responseMap.get("error"));
+    clientConnection3.disconnect();
+  }
+
+  @Test
+  public void testMock() {}
+
+  @Test
+  public void testCache(){
+
   }
 }
