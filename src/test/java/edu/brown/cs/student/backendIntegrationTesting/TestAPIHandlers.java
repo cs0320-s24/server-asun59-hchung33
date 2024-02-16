@@ -76,9 +76,7 @@ public class TestAPIHandlers {
   @Test
   public void testLoadAPI() throws IOException {
     HttpURLConnection clientConnection1 =
-        tryRequest(
-            "loadCSVHandler?"
-                + "path=data/house/house.csv");
+        tryRequest("loadCSVHandler?" + "path=data/house/house.csv");
     // API connection works
     assertEquals(200, clientConnection1.getResponseCode());
     // Expected response
@@ -91,8 +89,7 @@ public class TestAPIHandlers {
     HttpURLConnection clientConnection2 = tryRequest("loadCSVHandler?" + "path=FAKE");
     assertEquals(200, clientConnection2.getResponseCode());
     // Expected response
-    response =
-        this.mapAdapter.fromJson(new Buffer().readFrom(clientConnection2.getInputStream()));
+    response = this.mapAdapter.fromJson(new Buffer().readFrom(clientConnection2.getInputStream()));
     assertEquals("FAKE (No such file or directory)", response.get("error"));
     clientConnection2.disconnect();
 
@@ -100,8 +97,7 @@ public class TestAPIHandlers {
     HttpURLConnection clientConnection3 = tryRequest("loadCSVHandler?" + "MissingQuery!");
     assertEquals(200, clientConnection3.getResponseCode());
     // Expected response
-    response =
-        this.mapAdapter.fromJson(new Buffer().readFrom(clientConnection3.getInputStream()));
+    response = this.mapAdapter.fromJson(new Buffer().readFrom(clientConnection3.getInputStream()));
     assertEquals("Invalid Query", response.get("error"));
     clientConnection3.disconnect();
 
@@ -109,8 +105,7 @@ public class TestAPIHandlers {
     HttpURLConnection clientConnection4 = tryRequest("loadCSVHandler?" + "path");
     assertEquals(200, clientConnection4.getResponseCode());
     // Expected response
-    response =
-        this.mapAdapter.fromJson(new Buffer().readFrom(clientConnection4.getInputStream()));
+    response = this.mapAdapter.fromJson(new Buffer().readFrom(clientConnection4.getInputStream()));
     assertEquals("Invalid Query", response.get("error"));
     clientConnection4.disconnect();
   }
@@ -118,9 +113,7 @@ public class TestAPIHandlers {
   @Test
   public void testViewAPI() throws IOException {
     HttpURLConnection clientConnection1 =
-        tryRequest(
-            "viewCSVHandler?"
-                + "path=data/house/house.csv");
+        tryRequest("viewCSVHandler?" + "path=data/house/house.csv");
     // API connection works
     assertEquals(200, clientConnection1.getResponseCode());
     // Test error because no file loaded
@@ -130,40 +123,34 @@ public class TestAPIHandlers {
     clientConnection1.disconnect();
 
     // Valid view and output because file loaded
-    HttpURLConnection loadConnect =tryRequest(
-        "loadCSVHandler?path=data/house/house.csv");
+    HttpURLConnection loadConnect = tryRequest("loadCSVHandler?path=data/house/house.csv");
     assertEquals(200, loadConnect.getResponseCode());
-    HttpURLConnection clientConnection2 =
-        tryRequest(
-            "viewCSVHandler?path=data/house/house.csv");
+    HttpURLConnection clientConnection2 = tryRequest("viewCSVHandler?path=data/house/house.csv");
     assertEquals(200, clientConnection2.getResponseCode());
     List<List<String>> listResponse =
         this.listAdapter.fromJson(new Buffer().readFrom(clientConnection2.getInputStream()));
-    assertEquals(listResponse, List.of(
-        List.of("Julie's House", "2014", "Red"),
-        List.of("Grace's House", "2017", "Green"),
-        List.of("Steele's House", "2017", "Blue"),
-        List.of("Kassie's House", "2018", "Yellow")));
+    assertEquals(
+        listResponse,
+        List.of(
+            List.of("Julie's House", "2014", "Red"),
+            List.of("Grace's House", "2017", "Green"),
+            List.of("Steele's House", "2017", "Blue"),
+            List.of("Kassie's House", "2018", "Yellow")));
 
     // Invalid view after trying to view different File
     HttpURLConnection clientConnection3 =
-        tryRequest(
-            "viewCSVHandler?path=data/census/income_by_race.csv");
+        tryRequest("viewCSVHandler?path=data/census/income_by_race.csv");
     assertEquals(200, clientConnection2.getResponseCode());
-    response =
-        this.mapAdapter.fromJson(new Buffer().readFrom(clientConnection3.getInputStream()));
+    response = this.mapAdapter.fromJson(new Buffer().readFrom(clientConnection3.getInputStream()));
     assertEquals("File can not be viewed", response.get("error"));
     clientConnection3.disconnect();
     loadConnect.disconnect();
     clientConnection2.disconnect();
 
     // Invalid because bad query
-    HttpURLConnection clientConnection4 =
-        tryRequest(
-            "viewCSVHandler?WRONG");
+    HttpURLConnection clientConnection4 = tryRequest("viewCSVHandler?WRONG");
     assertEquals(200, clientConnection4.getResponseCode());
-    response =
-        this.mapAdapter.fromJson(new Buffer().readFrom(clientConnection4.getInputStream()));
+    response = this.mapAdapter.fromJson(new Buffer().readFrom(clientConnection4.getInputStream()));
     assertEquals("Invalid Query", response.get("error"));
     clientConnection4.disconnect();
   }
@@ -183,6 +170,4 @@ public class TestAPIHandlers {
     assertEquals("File can not be searched", response.get("error"));
     clientConnection1.disconnect();
   }
-
-
 }

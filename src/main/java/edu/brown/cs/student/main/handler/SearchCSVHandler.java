@@ -44,7 +44,7 @@ public class SearchCSVHandler implements Route {
       String headerPresent = request.queryParams("headerPresent");
       String columnIDString =
           request.queryParams("columnIDString"); // only one header will be in list
-      if (this.state.getMap()!=null&&this.state.getMap().containsKey(path)) {
+      if (this.state.getMap() != null && this.state.getMap().containsKey(path)) {
         // Get the parsed data
         List<List<String>> parsedData = this.state.getParsed();
         CSVSearcher<List<String>> searcher = new CSVSearcher<List<String>>(this.state.getCreator());
