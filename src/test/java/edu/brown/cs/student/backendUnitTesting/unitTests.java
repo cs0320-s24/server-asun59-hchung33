@@ -16,6 +16,7 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 
 public class unitTests {
+  static final int NUM_TRIALS = 100;
   BroadbandDatasource broadbandDatasource = new BroadbandDatasource();
   CacheBroadbandDatasource cacheBroadbandDatasource =
       new CacheBroadbandDatasource(this.broadbandDatasource);
@@ -98,4 +99,32 @@ public class unitTests {
             List.of("Kassie's House", "2018", "Yellow")),
         this.parseDatasource.getParsed());
   }
+
+  //  @Test
+  //  public void fuzzTesting() {
+  //    List<List<String>> countyList = this.broadbandDatasource.getCountyIDs();
+  //    this.cacheBroadbandDatasource.countyToMap(countyList);
+  //    for (int counter = 0; counter < NUM_TRIALS; counter++) {
+  //      String county = getRandomCounty();
+  //      String state = getRandomState();
+  //      BroadbandData result =
+  //          this.broadbandDatasource.getInternetData(
+  //              this.cacheBroadbandDatasource.getStateID(county),
+  //              this.cacheBroadbandDatasource.getCountyID(state));
+  //    }
+  //  }
+
+  //  private String getRandomState() {
+  //    Map<String, String> stateMap = this.cacheBroadbandDatasource.getStateMap();
+  //    List<String> keyArray = new ArrayList<String>(stateMap.keySet());
+  //    int randInt = (int) (Math.random() * keyArray.size());
+  //    return stateMap.get(keyArray.get(randInt));
+  //  }
+  //
+  //  private String getRandomCounty() {
+  //    Map<String, String> countyMap = this.cacheBroadbandDatasource.getCountyMap();
+  //    List<String> keyArray = new ArrayList<String>(countyMap.keySet());
+  //    int randInt = (int) (Math.random() * keyArray.size());
+  //    return countyMap.get(keyArray.get(randInt));
+  //  }
 }

@@ -100,7 +100,7 @@ public class CacheBroadbandDatasource {
    * @param county List of List of Strings containing counties and their corresponding IDs from API
    *     query
    */
-  private void countyToMap(List<List<String>> county) {
+  public void countyToMap(List<List<String>> county) {
     for (int i = 1; i < county.size(); i++) {
       List<String> s = county.get(i);
       String wholeLoc = s.get(0).split(", ")[0] + " " + s.get(0).split(", ")[1];
